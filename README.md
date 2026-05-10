@@ -45,14 +45,26 @@ This makes it ideal for practicing real‑world automation scenarios in a contro
 
 ## 📁 Project Structure
 
-tests/
-├── auth/        # authentication tests
-├── e2e/         # end-to-end scenarios
-└── forms/       # form-related tests
-pages/            # Page Object Model classes
-utils/            # helpers and shared utilities
+```text
+.
+├── tests
+│   ├── auth
+│   │   └── login.spec.ts
+│   ├── e2e
+│   │   └── admin-login.spec.ts
+│   └── forms
+│
+├── pages
+│   ├── LoginPage.ts
+│   └── DashboardPage.ts
+│
+├── utils
+│
+├── playwright.config.ts
+├── package.json
+└── README.md
 
-The structure may evolve over time as I learn and refactor.
+```
 
 ---
 
