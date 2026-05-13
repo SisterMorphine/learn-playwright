@@ -47,22 +47,27 @@ This makes it ideal for practicing real‑world automation scenarios in a contro
 
 ```text
 .
-├── tests
-│   ├── auth
-│   │   └── login.spec.ts
-│   ├── e2e
-│   │   └── admin-login.spec.ts
-│   └── forms
+├── .github/
+│   └── copilot-instructions.md    # AI agent guidelines
 │
-├── pages
-│   ├── LoginPage.ts
-│   └── DashboardPage.ts
+├── tests/                          # Test files organized by feature
+│   ├── auth/
+│   │   ├── admin-login.spec.ts    # Valid admin login test
+│   │   └── invalid-login.spec.ts  # Invalid credentials test
+│   ├── e2e/                       # End-to-end flows (placeholder)
+│   └── forms/                     # Form interaction tests (placeholder)
 │
-├── utils
+├── pages/                          # Page Object Model classes
+│   ├── LoginPage.ts               # Login page interactions
+│   └── DashboardPage.ts           # Dashboard page interactions
 │
-├── playwright.config.ts
-├── package.json
-└── README.md
+├── utils/                          # Reusable utilities (test data, helpers)
+│
+├── playwright.config.ts            # Playwright configuration
+├── package.json                    # Project dependencies
+├── package-lock.json
+├── tsconfig.json
+└── README.md                       # This file
 
 ```
 

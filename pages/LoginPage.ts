@@ -1,16 +1,20 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 
 export class LoginPage {
   readonly page: Page;
   readonly usernameInput: Locator;
   readonly passwordInput: Locator;
   readonly loginButton: Locator;
+  readonly errorMessage: Locator;
+  readonly errorMessage2: Locator;  
 
   constructor(page: Page) {
     this.page = page;
     this.usernameInput = page.getByTestId('username-input');
     this.passwordInput = page.getByTestId('password-input');
     this.loginButton = page.getByTestId('login-button');
+    this.errorMessage = page.getByTestId('error-message');
+    this.errorMessage2 = page.getByTestId('login-alert');
   }
 
   async goto() {
@@ -21,5 +25,15 @@ export class LoginPage {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
     await this.loginButton.click();
+  }
+
+  async expectLoaded() {
+    await expect(this.usernameInput).toBeVisible();
+    await expect(this.loginButton).toBeVisible();
+  }
+
+  async expectErrorMessage() {
+    await expect(this.errorMessage2).toBeVisible();
+    //await expect(this.page).toHaveURL(/bank\/?$/);
   }
 }
