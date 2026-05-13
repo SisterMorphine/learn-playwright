@@ -5,16 +5,14 @@ export class LoginPage {
   readonly usernameInput: Locator;
   readonly passwordInput: Locator;
   readonly loginButton: Locator;
-  readonly errorMessage: Locator;
-  readonly errorMessage2: Locator;  
+  readonly loginErrorMessage: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.usernameInput = page.getByTestId('username-input');
     this.passwordInput = page.getByTestId('password-input');
     this.loginButton = page.getByTestId('login-button');
-    this.errorMessage = page.getByTestId('error-message');
-    this.errorMessage2 = page.getByTestId('login-alert');
+    this.loginErrorMessage = page.getByTestId('login-alert');
   }
 
   async goto() {
@@ -33,7 +31,6 @@ export class LoginPage {
   }
 
   async expectErrorMessage() {
-    await expect(this.errorMessage2).toBeVisible();
-    //await expect(this.page).toHaveURL(/bank\/?$/);
+    await expect(this.loginErrorMessage).toBeVisible();
   }
 }

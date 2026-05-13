@@ -9,6 +9,8 @@ test.describe('Bank Demo - Invalid login', () => {
     await loginPage.login('invalid-user', 'wrong-password');
 
     await loginPage.expectErrorMessage();
+    await loginPage.expectLoaded();
+
   });
 
   test('User with incorrect password stays on login page with error message', async ({ page }) => {
@@ -18,5 +20,6 @@ test.describe('Bank Demo - Invalid login', () => {
     await loginPage.login('admin', 'wrong-password');
 
     await loginPage.expectErrorMessage();
+    await loginPage.expectLoaded();
   });
 });
