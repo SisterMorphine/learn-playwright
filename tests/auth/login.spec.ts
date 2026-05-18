@@ -131,9 +131,11 @@ test.describe('Login Feature Tests', () => {
     await loginPage.loginButton.click();
 
     // Verify username validation message appears
-    await expect(page.locator('text=Username is required')).toBeVisible();
+    await expect(loginPage.usernameErrorMessage).toBeVisible();
+    await expect(loginPage.usernameErrorMessage).toContainText('Username is required');
 
     // Verify user remains on login page
+    await expect(loginPage)
     await expect(page).toHaveURL('https://qaplayground.com/bank');
   });
 
