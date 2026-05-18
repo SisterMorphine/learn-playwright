@@ -12,9 +12,7 @@ test.describe('Login Feature Tests', () => {
 
     // 1. Navigate to the SecureBank login page at https://qaplayground.com/bank
     await loginPage.goto();
-    await expect((loginPage.usernameInput)).toBeVisible();
-    await expect((loginPage.passwordInput)).toBeVisible();
-    await expect((loginPage.loginButton)).toBeVisible();
+    await loginPage.expectLoaded();
 
     // 2. Enter valid admin credentials (username: 'admin', password: 'admin123')
     await loginPage.usernameInput.fill('admin');
@@ -33,9 +31,8 @@ test.describe('Login Feature Tests', () => {
     const dashboardPage = new DashboardPage(page);
 
     await loginPage.goto();
-    await expect((loginPage.usernameInput)).toBeVisible();
-    await expect((loginPage.passwordInput)).toBeVisible();
-    await expect((loginPage.loginButton)).toBeVisible();
+    await loginPage.expectLoaded();
+
 
     // 2. Enter valid read-only credentials (username: 'viewer', password: 'viewer123')
     await loginPage.usernameInput.fill('viewer');
@@ -53,9 +50,7 @@ test.describe('Login Feature Tests', () => {
 
     // 1. Navigate to the SecureBank login page
     await loginPage.goto();
-    await expect((loginPage.usernameInput)).toBeVisible();
-    await expect((loginPage.passwordInput)).toBeVisible();
-    await expect((loginPage.loginButton)).toBeVisible();
+    await loginPage.expectLoaded();
 
     // 2. Enter invalid credentials (username: 'invaliduser', password: 'wrongpassword')
     await loginPage.usernameInput.fill('invaliduser');
@@ -76,9 +71,8 @@ test.describe('Login Feature Tests', () => {
 
     // 1. Navigate to the SecureBank login page
     await loginPage.goto();
-    await expect((loginPage.usernameInput)).toBeVisible();
-    await expect((loginPage.passwordInput)).toBeVisible();
-    await expect((loginPage.loginButton)).toBeVisible();
+    await loginPage.expectLoaded();
+
 
     // 2. Click the Login button without entering any credentials
     await loginPage.loginButton.click();
@@ -96,9 +90,7 @@ test.describe('Login Feature Tests', () => {
 
     // 1. Navigate to the SecureBank login page
     await loginPage.goto();
-    await expect((loginPage.usernameInput)).toBeVisible();
-    await expect((loginPage.passwordInput)).toBeVisible();
-    await expect((loginPage.loginButton)).toBeVisible();
+    await loginPage.expectLoaded();
 
     // 2. Enter only username and leave password empty
     await loginPage.usernameInput.fill('admin');
@@ -120,9 +112,7 @@ test.describe('Login Feature Tests', () => {
 
     // 1. Navigate to the SecureBank login page
     await loginPage.goto();
-    await expect((loginPage.usernameInput)).toBeVisible();
-    await expect((loginPage.passwordInput)).toBeVisible();
-    await expect((loginPage.loginButton)).toBeVisible();
+    await loginPage.expectLoaded();
 
     // 2. Leave username empty and enter only password
     await loginPage.passwordInput.fill('admin123');
@@ -144,9 +134,7 @@ test.describe('Login Feature Tests', () => {
 
     // 1. Navigate to the SecureBank login page
     await loginPage.goto();
-    await expect((loginPage.usernameInput)).toBeVisible();
-    await expect((loginPage.passwordInput)).toBeVisible();
-    await expect((loginPage.loginButton)).toBeVisible();
+    await loginPage.expectLoaded();
 
     // 2. Enter a password in the password field
     await loginPage.passwordInput.fill('admin123');
@@ -174,9 +162,7 @@ test.describe('Login Feature Tests', () => {
 
     // 1. Navigate to the SecureBank login page
     await loginPage.goto();
-    await expect((loginPage.usernameInput)).toBeVisible();
-    await expect((loginPage.passwordInput)).toBeVisible();
-    await expect((loginPage.loginButton)).toBeVisible();
+    await loginPage.expectLoaded();
 
     // 2. Enter credentials in both fields
     await loginPage.usernameInput.fill('admin');
