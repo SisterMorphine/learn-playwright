@@ -125,8 +125,7 @@ test.describe('Login Feature Tests', () => {
     await expect(loginPage.usernameErrorMessage).toContainText('Username is required');
 
     // Verify user remains on login page
-    await expect(loginPage)
-    await expect(page).toHaveURL('https://qaplayground.com/bank');
+    await loginPage.expectLoaded();
   });
 
   test('TC-LOGIN-07: Password visibility toggle functionality', async ({ page }) => {
