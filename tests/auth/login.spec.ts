@@ -30,7 +30,7 @@ test.describe('Login Feature Tests', () => {
   });
 
   test('TC-LOGIN-02: Successful read-only user login', async ({ page }) => {
-    
+
     // 1. Enter valid read-only credentials (username: 'viewer', password: 'viewer123')
     await loginPage.usernameInput.fill('viewer');
     await loginPage.passwordInput.fill('viewer123');
@@ -43,7 +43,7 @@ test.describe('Login Feature Tests', () => {
   });
 
   test('TC-LOGIN-03: Failed login with invalid credentials displays error', async ({ page }) => {
-  
+
     // 1. Enter invalid credentials (username: 'invaliduser', password: 'wrongpassword')
     await loginPage.usernameInput.fill('invaliduser');
     await loginPage.passwordInput.fill('wrongpassword');
@@ -59,7 +59,7 @@ test.describe('Login Feature Tests', () => {
   });
 
   test('TC-LOGIN-04: Empty form validation', async ({ page }) => {
-    
+
     // 1. Click the Login button without entering any credentials
     await loginPage.loginButton.click();
 
@@ -72,7 +72,7 @@ test.describe('Login Feature Tests', () => {
   });
 
   test('TC-LOGIN-05: Username field only validation', async ({ page }) => {
-    
+
     // 1. Enter only username and leave password empty
     await loginPage.usernameInput.fill('admin');
 
@@ -89,7 +89,7 @@ test.describe('Login Feature Tests', () => {
   });
 
   test('TC-LOGIN-06: Password field only validation', async ({ page }) => {
-    
+
     // 1. Leave username empty and enter only password
     await loginPage.passwordInput.fill('admin123');
 
@@ -105,7 +105,7 @@ test.describe('Login Feature Tests', () => {
   });
 
   test('TC-LOGIN-07: Password visibility toggle functionality', async ({ page }) => {
-    
+
     // 1. Enter a password in the password field
     await loginPage.passwordInput.fill('admin123');
 
@@ -128,7 +128,7 @@ test.describe('Login Feature Tests', () => {
 
 
   test('TC-LOGIN-08: Clear form button functionality', async ({ page }) => {
-    
+
     // 1. Enter credentials in both fields
     await loginPage.usernameInput.fill('admin');
     await loginPage.passwordInput.fill('admin123');
