@@ -6,19 +6,23 @@ import { LoginPage } from '../../pages/LoginPage';
 import { DashboardPage } from '../../pages/DashboardPage';
 
 test.describe('Login Feature Tests', () => {
-  test('TC-LOGIN-01: Successful admin login and dashboard access', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    const dashboardPage = new DashboardPage(page);
+  let loginPage: LoginPage;
+  let dashboardPage: DashboardPage;
 
+  test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
+    dashboardPage = new DashboardPage(page);
     // 1. Navigate to the SecureBank login page at https://qaplayground.com/bank
     await loginPage.goto();
     await loginPage.expectLoaded();
+  });
 
-    // 2. Enter valid admin credentials (username: 'admin', password: 'admin123')
+  test('TC-LOGIN-01: Successful admin login and dashboard access', async ({ page }) => {
+    // 1. Enter valid admin credentials (username: 'admin', password: 'admin123')
     await loginPage.usernameInput.fill('admin');
     await loginPage.passwordInput.fill('admin123');
 
-    // 3. Click the Login button
+    // 2. Click the Login button
     await loginPage.loginButton.click();
 
     // Verify dashboard loads successfully
@@ -26,19 +30,12 @@ test.describe('Login Feature Tests', () => {
   });
 
   test('TC-LOGIN-02: Successful read-only user login', async ({ page }) => {
-    // 1. Navigate to the SecureBank login page at https://qaplayground.com/bank
-    const loginPage = new LoginPage(page);
-    const dashboardPage = new DashboardPage(page);
-
-    await loginPage.goto();
-    await loginPage.expectLoaded();
-
-
-    // 2. Enter valid read-only credentials (username: 'viewer', password: 'viewer123')
+    
+    // 1. Enter valid read-only credentials (username: 'viewer', password: 'viewer123')
     await loginPage.usernameInput.fill('viewer');
     await loginPage.passwordInput.fill('viewer123');
 
-    // 3. Click the Login button
+    // 2. Click the Login button
     await loginPage.loginButton.click();
 
     // Verify dashboard loads successfully for viewer
@@ -46,18 +43,13 @@ test.describe('Login Feature Tests', () => {
   });
 
   test('TC-LOGIN-03: Failed login with invalid credentials displays error', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-
-    // 1. Navigate to the SecureBank login page
-    await loginPage.goto();
-    await loginPage.expectLoaded();
-
-    // 2. Enter invalid credentials (username: 'invaliduser', password: 'wrongpassword')
+  
+    // 1. Enter invalid credentials (username: 'invaliduser', password: 'wrongpassword')
     await loginPage.usernameInput.fill('invaliduser');
     await loginPage.passwordInput.fill('wrongpassword');
 
 
-    // 3. Click the Login button
+    // 2. Click the Login button
     await loginPage.loginButton.click();
 
     // Verify user stays on login page and form retains values
@@ -67,14 +59,8 @@ test.describe('Login Feature Tests', () => {
   });
 
   test('TC-LOGIN-04: Empty form validation', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-
-    // 1. Navigate to the SecureBank login page
-    await loginPage.goto();
-    await loginPage.expectLoaded();
-
-
-    // 2. Click the Login button without entering any credentials
+    
+    // 1. Click the Login button without entering any credentials
     await loginPage.loginButton.click();
 
     // Verify validation messages appear
@@ -86,17 +72,12 @@ test.describe('Login Feature Tests', () => {
   });
 
   test('TC-LOGIN-05: Username field only validation', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-
-    // 1. Navigate to the SecureBank login page
-    await loginPage.goto();
-    await loginPage.expectLoaded();
-
-    // 2. Enter only username and leave password empty
+    
+    // 1. Enter only username and leave password empty
     await loginPage.usernameInput.fill('admin');
 
 
-    // 3. Click the Login button
+    // 2. Click the Login button
     await loginPage.loginButton.click();
 
     // Verify password validation message appears
@@ -108,16 +89,11 @@ test.describe('Login Feature Tests', () => {
   });
 
   test('TC-LOGIN-06: Password field only validation', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-
-    // 1. Navigate to the SecureBank login page
-    await loginPage.goto();
-    await loginPage.expectLoaded();
-
-    // 2. Leave username empty and enter only password
+    
+    // 1. Leave username empty and enter only password
     await loginPage.passwordInput.fill('admin123');
 
-    // 3. Click the Login button
+    // 2. Click the Login button
     await loginPage.loginButton.click();
 
     // Verify username validation message appears
@@ -129,26 +105,21 @@ test.describe('Login Feature Tests', () => {
   });
 
   test('TC-LOGIN-07: Password visibility toggle functionality', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-
-    // 1. Navigate to the SecureBank login page
-    await loginPage.goto();
-    await loginPage.expectLoaded();
-
-    // 2. Enter a password in the password field
+    
+    // 1. Enter a password in the password field
     await loginPage.passwordInput.fill('admin123');
 
     // Verify toggle button is visible
     await expect(page.getByTestId('toggle-password-btn')).toBeVisible();
 
-    // 3. Click the 'Toggle password visibility' button
+    // 2. Click the 'Toggle password visibility' button
     await page.getByTestId('toggle-password-btn').click();
 
     // Verify password is now visible as plain text
     const passwordInput = page.getByTestId('password-input');
     await expect(passwordInput).toHaveAttribute('type', 'text');
 
-    // 4. Click the toggle button again
+    // 3. Click the toggle button again
     await page.getByTestId('toggle-password-btn').click();
 
     // Verify password is masked again
@@ -157,20 +128,15 @@ test.describe('Login Feature Tests', () => {
 
 
   test('TC-LOGIN-08: Clear form button functionality', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-
-    // 1. Navigate to the SecureBank login page
-    await loginPage.goto();
-    await loginPage.expectLoaded();
-
-    // 2. Enter credentials in both fields
+    
+    // 1. Enter credentials in both fields
     await loginPage.usernameInput.fill('admin');
     await loginPage.passwordInput.fill('admin123');
 
     // Verify credentials are entered
     await expect(page.getByTestId('username-input')).toHaveValue('admin');
 
-    // 3. Click the Clear button
+    // 2. Click the Clear button
     await page.getByTestId('clear-button').click();
 
     // Verify form is cleared
