@@ -4,6 +4,7 @@ export const TEST_URLS = {
 };
 
 export const API_ENDPOINTS = {
-  catFacts: 'https://catfact.ninja',
-  dogFacts: 'https://api.example.com/dog-facts'
+  catFactsBaseURL: 'https://catfact.ninja',
+  catFactsList: 'https://catfact.ninja/facts',
+  catAPI: 'https://api.thecatapi.com/v1'
 };

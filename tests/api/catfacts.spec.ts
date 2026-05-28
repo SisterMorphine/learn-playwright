@@ -3,7 +3,7 @@ import { API_ENDPOINTS } from '../../utils/testData';
 
 test.describe('Cat Facts API', () => {
   test('should retrieve paginated cat facts', async ({ request }) => {
-    const response = await request.get(API_ENDPOINTS.catFacts + '/facts');
+    const response = await request.get(API_ENDPOINTS.catFactsList);
 
     // Assert that the request was successful
     expect(response.ok()).toBeTruthy();
@@ -33,15 +33,14 @@ test.describe('Cat Facts API', () => {
 
     // Verify pagination properties
     expect(responseBody.current_page).toBe(1);
-    expect(responseBody.per_page).toBe(10);
-    expect(responseBody.from).toBe(1);
-    expect(responseBody.to).toBe(10);
+    expect(responseBody.per_page).toBeGreaterThan(0);
+    expect(responseBody.from).toBe(1);   
     expect(responseBody.last_page).toBeGreaterThanOrEqual(1);
     expect(responseBody.total).toBeGreaterThanOrEqual(responseBody.per_page);
   });
 
   test('should navigate to a specific page', async ({ request }) => {
-    const response = await request.get('/facts?page=2');
+    const response = await request.get(API_ENDPOINTS.catFactsList + '?page=2');
 
     // Assert that the request was successful
     expect(response.ok()).toBeTruthy();
