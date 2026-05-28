@@ -11,18 +11,23 @@ The goal of this project is not to create a production-ready test suite, but to:
 
 ## 🎯 Project Goals
 
-- Learn Playwright using realistic web applications
+- Learn Playwright using realistic web applications and APIs
 - Practice UI automation concepts such as:
   - Page Object Model (POM)
   - Stable selectors
   - Happy and unhappy paths
   - End‑to‑end flows
+- Practice API testing concepts:
+  - Response validation
+  - Pagination handling
+  - Multiple API endpoints
 - Build a personal reference project I can iterate on over time
 
 ---
 
 ## 🌐 Application Under Test
 
+### UI Testing
 This project uses **QA Playground**, specifically the **Bank Demo application**, as a testing target.
 
 The Bank Demo provides:
@@ -30,7 +35,10 @@ The Bank Demo provides:
 - Different user roles (admin, viewer)
 - Dashboard and protected routes
 
-This makes it ideal for practicing real‑world automation scenarios in a controlled environment.
+### API Testing
+- **Cat Facts API** (catfact.ninja) – Practice with paginated API responses, data validation, and multiple endpoints
+
+Both make it ideal for practicing real‑world automation scenarios in a controlled environment.
 
 ---
 
@@ -51,17 +59,25 @@ This makes it ideal for practicing real‑world automation scenarios in a contro
 │   └── copilot-instructions.md    # AI agent guidelines
 │
 ├── tests/                          # Test files organized by feature
+│   ├── api/
+│   │   └── dogapitests.spec.ts    # Cat Facts API tests (pagination, data validation)
 │   ├── auth/
 │   │   ├── admin-login.spec.ts    # Valid admin login test
 │   │   └── invalid-login.spec.ts  # Invalid credentials test
-│   ├── e2e/                       # End-to-end flows (placeholder)
-│   └── forms/                     # Form interaction tests (placeholder)
+│   ├── dashboard/
+│   │   └── dashboard.spec.ts      # Dashboard page tests
+│   ├── e2e/                       # End-to-end flows
+│   └── forms/                     # Form interaction tests
 │
 ├── pages/                          # Page Object Model classes
 │   ├── LoginPage.ts               # Login page interactions
 │   └── DashboardPage.ts           # Dashboard page interactions
 │
-├── utils/                          # Reusable utilities (test data, helpers)
+├── utils/                          # Reusable utilities
+│   ├── testData.ts                # Test data, endpoints, fixtures
+│   └── fixtures.ts                # Playwright fixtures
+│
+├── specs/                          # Test documentation and test plans
 │
 ├── playwright.config.ts            # Playwright configuration
 ├── package.json                    # Project dependencies
