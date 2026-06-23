@@ -3,6 +3,11 @@ export const TEST_URLS = {
   dashboard: 'https://qaplayground.com/bank/dashboard'
 };
 
+export const AUTH_FILES = {
+  admin: 'playwright/.auth/admin.json',
+  viewer: 'playwright/.auth/viewer.json',
+};
+
 export const API_ENDPOINTS = {
   catFactsBaseURL: 'https://catfact.ninja',
   catFactsList: 'https://catfact.ninja/facts',

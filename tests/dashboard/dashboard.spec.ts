@@ -27,7 +27,7 @@ test.describe('Dashboard Features Tests', () => {
         //assert that the recent transactions table displays up to 5 transactions   
         const rows = dashboardPage.recentTransactionsTable.locator('tbody tr');
         const rowCount = await rows.count();
-        await expect(rowCount).toBeLessThanOrEqual(5);
+        expect(rowCount).toBeLessThanOrEqual(5);
     
     });
 });

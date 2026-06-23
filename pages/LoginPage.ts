@@ -21,7 +21,7 @@ export class LoginPage {
     }
 
     async goto() {
-        await this.page.goto('https://qaplayground.com/bank');
+        await this.page.goto('/bank');
     }
 
     async login(username: string, password: string) {

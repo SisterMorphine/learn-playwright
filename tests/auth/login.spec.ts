@@ -68,7 +68,7 @@ test.describe('Login Feature Tests', () => {
     await expect(page.locator('text=Password is required')).toBeVisible();
 
     // Verify user remains on login page
-    await expect(page).toHaveURL('https://qaplayground.com/bank');
+    await expect(page).toHaveURL('/bank');
   });
 
   test('TC-LOGIN-05: Username field only validation', async ({ page }) => {
@@ -84,7 +84,7 @@ test.describe('Login Feature Tests', () => {
     await expect(page.locator('text=Password is required')).toBeVisible();
 
     // Verify user remains on login page
-    await expect(page).toHaveURL('https://qaplayground.com/bank');
+    await expect(page).toHaveURL('/bank');
     await expect(page.getByTestId('username-input')).toHaveValue('admin');
   });
 
