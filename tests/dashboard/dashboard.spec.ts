@@ -22,6 +22,12 @@ test.describe('Dashboard Features Tests', () => {
 
     test('TC-DASH-04: Recent transactions table display up to 5 transactions', async ({ adminPage }) => {
         const dashboardPage = new DashboardPage(adminPage);
-        await dashboardPage.expectRecentTransactionsDisplayed();
+        await expect(dashboardPage.recentTransactionsTable).toBeVisible();
+        await expect(dashboardPage.recentTransactionsTableBody).toBeVisible();
+        //assert that the recent transactions table displays up to 5 transactions   
+        const rows = dashboardPage.recentTransactionsTable.locator('tbody tr');
+        const rowCount = await rows.count();
+        await expect(rowCount).toBeLessThanOrEqual(5);
+    
     });
 });

@@ -5,6 +5,7 @@ export class DashboardPage {
     readonly dashboardTitle: Locator;
     readonly viewerBadge: Locator;
     readonly recentTransactionsTable: Locator;
+    readonly recentTransactionsTableBody: Locator;
     readonly totalBalanceCard: Locator;
     readonly activeAccountsCard: Locator;
     readonly accountsCount: Locator;
@@ -16,6 +17,7 @@ export class DashboardPage {
         this.dashboardTitle = page.getByRole('heading', { name: /dashboard/i });
         this.viewerBadge = page.getByTestId('viewer-badge');
         this.recentTransactionsTable = page.getByTestId('recent-transactions-table');
+        this.recentTransactionsTableBody = this.recentTransactionsTable.locator('tbody');
         this.totalBalanceCard = page.getByTestId('total-balance-card');
         this.activeAccountsCard = page.getByTestId('accounts-count-card');
         this.accountsCount = page.getByTestId('accounts-count');
