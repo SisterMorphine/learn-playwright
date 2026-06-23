@@ -14,7 +14,7 @@ export class DashboardPage {
 
     constructor(page: Page) {
         this.page = page;
-        this.dashboardTitle = page.getByRole('heading', { name: /dashboard/i });
+        this.dashboardTitle = page.getByTestId('page-title');
         this.viewerBadge = page.getByTestId('viewer-badge');
         this.recentTransactionsTable = page.getByTestId('recent-transactions-table');
         this.recentTransactionsTableBody = this.recentTransactionsTable.locator('tbody');
@@ -26,8 +26,8 @@ export class DashboardPage {
     }
 
     async expectLoaded() {
-        await expect(this.dashboardTitle).toBeVisible();
         await expect(this.page).toHaveURL(/bank\/dashboard/);
+        await expect(this.page.getByRole('navigation', { name: 'Bank navigation' })).toBeVisible();
     }
 
     async expectViewerAccess() {
