@@ -18,33 +18,17 @@ export class DashboardPage {
         this.viewerBadge = page.getByTestId('viewer-badge');
         this.recentTransactionsTable = page.getByTestId('recent-transactions-table');
         this.recentTransactionsTableBody = this.recentTransactionsTable.locator('tbody');
-        this.totalBalanceCard = page.getByTestId('total-balance-card');
+        this.totalBalanceCard = page.getByTestId('total-balance');
+
         this.activeAccountsCard = page.getByTestId('accounts-count-card');
         this.accountsCount = page.getByTestId('accounts-count');
         this.totalTransactionsCard = page.getByTestId('transactions-count-card');
         this.transactionsCount = page.getByTestId('transactions-count');
     }
 
-    async expectLoaded() {
+    async pageLoaded() {
         await expect(this.page).toHaveURL(/bank\/dashboard/);
         await expect(this.page.getByRole('navigation', { name: 'Bank navigation' })).toBeVisible();
-    }
-
-    async expectViewerAccess() {
-        await expect(this.viewerBadge).toBeVisible();
-        await expect(this.viewerBadge).toHaveText('Read-only');
-    }
-
-    async expectRecentTransactionsDisplayed() {
-        await expect(this.recentTransactionsTable).toBeVisible();
-        const rows = this.recentTransactionsTable.locator('tbody tr');
-        const rowCount = await rows.count();
-        await expect(rowCount).toBeLessThanOrEqual(5);
-    }
-
-    async expectSkeletonLoading() {
-        const skeleton = this.page.getByTestId('skeleton-card');
-        await expect(skeleton).toBeVisible();
     }
     
 }

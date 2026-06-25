@@ -30,21 +30,11 @@ export class LoginPage {
         await this.loginButton.click();
     }
 
-    async expectLoaded() {
+    async pageLoaded() {
         await expect(this.usernameInput).toBeVisible();
         await expect(this.passwordInput).toBeVisible();
         await expect(this.loginButton).toBeVisible();
     }
 
-    async expectLoginErrorMessage() {
-        await expect(this.loginErrorMessage).toBeVisible();
-    }
 
-    async expectPasswordErrorMessage() {
-        await expect(this.passwordErrorMessage).toBeVisible();
-    }
-
-    async expectUserNameErrorMessage() {
-        await expect(this.usernameErrorMessage).toBeVisible();
-    }
 }

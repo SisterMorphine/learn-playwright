@@ -14,7 +14,7 @@ test.describe('Login Feature Tests', () => {
     dashboardPage = new DashboardPage(page);
     // 1. Navigate to the SecureBank login page at https://qaplayground.com/bank
     await loginPage.goto();
-    await loginPage.expectLoaded();
+    await loginPage.pageLoaded();
   });
 
   test('TC-LOGIN-01: Successful admin login and dashboard access', async ({ page }) => {
@@ -26,7 +26,7 @@ test.describe('Login Feature Tests', () => {
     await loginPage.loginButton.click();
 
     // Verify dashboard loads successfully
-    await dashboardPage.expectLoaded();
+    await dashboardPage.pageLoaded();
   });
 
   test('TC-LOGIN-02: Successful read-only user login', async ({ page }) => {
@@ -39,7 +39,7 @@ test.describe('Login Feature Tests', () => {
     await loginPage.loginButton.click();
 
     // Verify dashboard loads successfully for viewer
-    await dashboardPage.expectLoaded();
+    await dashboardPage.pageLoaded();
   });
 
   test('TC-LOGIN-03: Failed login with invalid credentials displays error', async ({ page }) => {
@@ -53,7 +53,7 @@ test.describe('Login Feature Tests', () => {
     await loginPage.loginButton.click();
 
     // Verify user stays on login page and form retains values
-    await loginPage.expectLoaded();
+    await loginPage.pageLoaded();
     await expect(page.getByTestId('username-input')).toHaveValue('invaliduser');
     await expect(page.getByTestId('password-input')).toHaveValue('wrongpassword');
   });
@@ -101,7 +101,7 @@ test.describe('Login Feature Tests', () => {
     await expect(loginPage.usernameErrorMessage).toContainText('Username is required');
 
     // Verify user remains on login page
-    await loginPage.expectLoaded();
+    await loginPage.pageLoaded();
   });
 
   test('TC-LOGIN-07: Password visibility toggle functionality', async ({ page }) => {

@@ -12,7 +12,7 @@ setup('authenticate as admin', async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.goto();
   await loginPage.login('admin', 'admin123');
-  await new DashboardPage(page).expectLoaded();
+  await new DashboardPage(page).pageLoaded();
   await page.context().storageState({ path: AUTH_FILES.admin });
 });
 
@@ -20,6 +20,6 @@ setup('authenticate as viewer', async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.goto();
   await loginPage.login('viewer', 'viewer123');
-  await new DashboardPage(page).expectLoaded();
+  await new DashboardPage(page).pageLoaded();
   await page.context().storageState({ path: AUTH_FILES.viewer });
 });
