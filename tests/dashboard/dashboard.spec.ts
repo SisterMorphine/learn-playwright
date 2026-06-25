@@ -23,21 +23,22 @@ test.describe('Dashboard Features Tests', () => {
     test('TC-DASH-02: Stat card values match actual account and transactions data', async ({ adminDashboardPage }) => {
         const dashboardPage = new DashboardPage(adminDashboardPage);
 
-        // Wait for the count-up animation to finish — the container sets data-loading="false" when done
-        await adminDashboardPage.locator('#dashboard-page-container[data-loading="false"]').waitFor();
-
-        const balanceValue = dashboardPage.totalBalanceCard
-        await expect(balanceValue).toBeVisible();
-        const dashboardBalance = parseFloat((await balanceValue.textContent() ?? '').replace(/[^0-9.]/g, ''));
+        // Poll until the total-balance value stops changing — count-up animation runs after data loads
+        await expect(dashboardPage.totalBalanceCard).toBeVisible();
+        let dashboardBalance = 0;
+        await expect.poll(async () => {
+            const prev = dashboardBalance;
+            dashboardBalance = parseFloat(
+                (await dashboardPage.totalBalanceCard.textContent() ?? '').replace(/[^0-9.]/g, '')
+            );
+            return dashboardBalance > 0 && dashboardBalance === prev;
+        }, { intervals: [300, 300, 300, 300, 300, 300], timeout: 10000 }).toBe(true);
 
         // Navigate to accounts page
         await adminDashboardPage.goto('/bank/accounts');
-        await adminDashboardPage.locator('td').filter({ hasText: /\$/ }).first().waitFor();
-
-
         // Wait for actual balance data to load — skeleton rows appear first with empty cells.
         // Match both positive ($2,500.00) and negative (-$4,125.00) balance cells.
-        await adminDashboardPage.locator('#dashboard-page-container[data-loading="false"]').waitFor();
+        await adminDashboardPage.locator('td').filter({ hasText: /\$/ }).first().waitFor();
 
         const rows = await adminDashboardPage.getByRole('row').all();
         // Skip index 0 if the first row contains table headers (th)
@@ -54,7 +55,7 @@ test.describe('Dashboard Features Tests', () => {
 
             console.log(`Row ${i}: ${dashboardBalance} is ${accountsTotal}`);
         }
-        //expect(accountsTotal).toBeCloseTo(dashboardBalance, 2);
+        expect(accountsTotal).toBeCloseTo(dashboardBalance, 2);
     });
 
     test('TC-DASH-04: Recent transactions table display up to 5 transactions', async ({ adminDashboardPage }) => {
