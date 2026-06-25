@@ -11,6 +11,11 @@ export class DashboardPage {
     readonly accountsCount: Locator;
     readonly totalTransactionsCard: Locator;
     readonly transactionsCount: Locator;
+    readonly quickActions: {
+        addAccount: Locator;
+        newTransaction: Locator;
+        viewAllAccounts: Locator;
+    };
 
     constructor(page: Page) {
         this.page = page;
@@ -24,11 +29,21 @@ export class DashboardPage {
         this.accountsCount = page.getByTestId('accounts-count');
         this.totalTransactionsCard = page.getByTestId('transactions-count-card');
         this.transactionsCount = page.getByTestId('transactions-count');
+        this.quickActions = {
+            addAccount: page.getByTestId('quick-add-account'),
+            newTransaction: page.getByTestId('quick-new-transaction'),
+            viewAllAccounts: page.getByTestId('quick-view-accounts'),
+        };
     }
 
     async pageLoaded() {
         await expect(this.page).toHaveURL(/bank\/dashboard/);
         await expect(this.page.getByRole('navigation', { name: 'Bank navigation' })).toBeVisible();
+    }
+
+    //method to click on the quick action buttons
+    async clickQuickAction(action: 'addAccount' | 'newTransaction' | 'viewAllAccounts') {
+        await this.quickActions[action].click();
     }
     
 }

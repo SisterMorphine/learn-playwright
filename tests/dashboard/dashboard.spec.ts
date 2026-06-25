@@ -58,6 +58,24 @@ test.describe('Dashboard Features Tests', () => {
         expect(accountsTotal).toBeCloseTo(dashboardBalance, 2);
     });
 
+    test('TC-DASH-03: Quick actions navigate to correct pages', async ({ adminDashboardPage }) => {
+        const dashboardPage = new DashboardPage(adminDashboardPage);
+        await expect(dashboardPage.quickActions.addAccount).toBeVisible();
+        await expect(dashboardPage.quickActions.newTransaction).toBeVisible();
+        await expect(dashboardPage.quickActions.viewAllAccounts).toBeVisible();
+
+        await dashboardPage.clickQuickAction('addAccount');
+        await expect(adminDashboardPage.getByTestId('account-modal')).toBeVisible(); // Verify that the accounts page is displayed
+        await expect(adminDashboardPage).toHaveURL(/bank\/accounts/);
+
+        await adminDashboardPage.goBack();
+
+        await dashboardPage.clickQuickAction('newTransaction');
+        await expect(adminDashboardPage.getByTestId('transaction-modal')).toBeVisible(); // Verify that the transactions modal  is displayed
+        await expect(adminDashboardPage).toHaveURL(/bank\/transactions/);
+
+    });
+
     test('TC-DASH-04: Recent transactions table display up to 5 transactions', async ({ adminDashboardPage }) => {
         const dashboardPage = new DashboardPage(adminDashboardPage);
         await expect(dashboardPage.recentTransactionsTable).toBeVisible();
