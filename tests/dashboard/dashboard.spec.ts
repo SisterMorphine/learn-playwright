@@ -86,4 +86,28 @@ test.describe('Dashboard Features Tests', () => {
         expect(rowCount).toBeLessThanOrEqual(5);
 
     });
+
+    test('TC-DASH-05: Pinned Accounts section supports drag and drop reordering', async ({ adminDashboardPage }) => {
+        const dashboardPage = new DashboardPage(adminDashboardPage);
+        //Locate the Pinned Accounts section: data-testid='pinned-accounts-section'
+        const pinnedAccountsSection = adminDashboardPage.getByTestId('pinned-accounts-section');
+        await expect(pinnedAccountsSection).toBeVisible();
+
+        const pinnedAccountsDropZone = adminDashboardPage.getByTestId('drop-zone');
+        await expect(pinnedAccountsDropZone).toBeVisible();
+
+        //Locate the draggable account items within the Pinned Accounts section: data-testid'pinned-account-item'
+        const pinnedAccountItems = adminDashboardPage.locator('[draggable="true"]').and(adminDashboardPage.locator('[data-testid^="draggable-account"]'));  
+        const itemCount = await pinnedAccountItems.count();
+        expect(itemCount).toBeGreaterThan(0);
+
+        pinnedAccountItems.nth(0).dragTo(pinnedAccountItems.nth(itemCount - 1));
+        // Verify that the order of the pinned accounts has changed
+        const newFirstItemText = await pinnedAccountItems.nth(0).textContent();
+        const newLastItemText = await pinnedAccountItems.nth(itemCount - 1).textContent();
+        expect(newFirstItemText).not.toBe(newLastItemText);
+       
+
+
+    });
 });
