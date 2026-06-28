@@ -20,14 +20,6 @@ export const test = base.extend<TestFixtures>({
     await use(page);
   },
 
-  readOnlyDashboardPage: async ({ page }, use) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
-    await loginPage.login('viewer', 'viewer123');
-    await new DashboardPage(page).pageLoaded();
-    await use(page);
-  },
-
   loginPage: async ({ page }, use) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
