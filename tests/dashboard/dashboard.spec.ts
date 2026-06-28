@@ -49,8 +49,8 @@ test.describe('Dashboard Features Tests', () => {
             // Extract text from the fourthcolumn of each row
             const balanceText = await balanceCell[3].textContent() ?? '0';
 
-            const balanceValue= parseFloat(balanceText.replace(/[^0-9.-]/g, ''));
-            
+            const balanceValue = parseFloat(balanceText.replace(/[^0-9.-]/g, ''));
+
             accountsTotal += balanceValue;
 
             console.log(`Row ${i}: ${dashboardBalance} is ${accountsTotal}`);
@@ -97,17 +97,22 @@ test.describe('Dashboard Features Tests', () => {
         await expect(pinnedAccountsDropZone).toBeVisible();
 
         //Locate the draggable account items within the Pinned Accounts section: data-testid'pinned-account-item'
-        const pinnedAccountItems = adminDashboardPage.locator('[draggable="true"]').and(adminDashboardPage.locator('[data-testid^="draggable-account"]'));  
+        const pinnedAccountItems = adminDashboardPage.locator('[draggable="true"]').and(adminDashboardPage.locator('[data-testid^="draggable-account"]'));
+
         const itemCount = await pinnedAccountItems.count();
         expect(itemCount).toBeGreaterThan(0);
 
-        pinnedAccountItems.nth(0).dragTo(pinnedAccountItems.nth(itemCount - 1));
+        await pinnedAccountItems.nth(0).dragTo(pinnedAccountItems.nth(itemCount - 1));
         // Verify that the order of the pinned accounts has changed
-        const newFirstItemText = await pinnedAccountItems.nth(0).textContent();
-        const newLastItemText = await pinnedAccountItems.nth(itemCount - 1).textContent();
-        expect(newFirstItemText).not.toBe(newLastItemText);
-       
+        const firstTextBefore = await pinnedAccountItems.nth(0).textContent();
+        const lastTextBefore = await pinnedAccountItems.nth(itemCount - 1).textContent();
 
+        await pinnedAccountItems.nth(0).dragTo(pinnedAccountItems.nth(itemCount - 1));
 
+        const firstTextAfter = await pinnedAccountItems.nth(0).textContent();
+        const lastTextAfter = await pinnedAccountItems.nth(itemCount - 1).textContent();
+
+        expect(firstTextAfter).toBe(lastTextBefore);
+        expect(lastTextAfter).toBe(firstTextBefore);
     });
 });
