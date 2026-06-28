@@ -14,7 +14,8 @@ The goal of this project is not to create a production-ready test suite, but to:
 - Learn Playwright using realistic web applications and APIs
 - Practice UI automation concepts such as:
   - Page Object Model (POM)
-  - Stable selectors
+  - Custom fixtures with dependency chaining
+  - Stable selectors (role, testid, text)
   - Happy and unhappy paths
   - End‑to‑end flows
 - Practice API testing concepts:
@@ -28,17 +29,17 @@ The goal of this project is not to create a production-ready test suite, but to:
 ## 🌐 Application Under Test
 
 ### UI Testing
-This project uses **QA Playground**, specifically the **Bank Demo application**, as a testing target.
+This project uses **QA Playground**, specifically the **Bank Demo application** (`https://qaplayground.com/bank`), as a testing target.
 
 The Bank Demo provides:
-- Login and authentication scenarios
-- Different user roles (admin, viewer)
-- Dashboard and protected routes
+- Login and authentication scenarios (admin / viewer roles)
+- Dashboard with stat cards, pinned accounts, and quick actions
+- Accounts management (create, edit, delete, filter, sort)
+- Transactions (create, filter by account/type/date, CSV export, detail view)
 
 ### API Testing
-- **Cat Facts API** (catfact.ninja) – Practice with paginated API responses, data validation, and multiple endpoints
-
-Both make it ideal for practicing real‑world automation scenarios in a controlled environment.
+- **Cat Facts API** (`catfact.ninja`) – Paginated responses, data validation
+- **Cat API** (`api.thecatapi.com`) – Favourites and image search (requires `CAT_API_KEY` in `.env`)
 
 ---
 
@@ -55,36 +56,34 @@ Both make it ideal for practicing real‑world automation scenarios in a control
 
 ```text
 .
-├── .github/
-│   └── copilot-instructions.md    # AI agent guidelines
-│
 ├── tests/                          # Test files organized by feature
 │   ├── api/
-│   │   └── dogapitests.spec.ts    # Cat Facts API tests (pagination, data validation)
+│   │   ├── catfacts.spec.ts        # Cat Facts API – pagination, data validation
+│   │   ├── catfavourites.spec.ts   # Cat API – favourites endpoint
+│   │   └── catimages.spec.ts       # Cat API – image search
 │   ├── auth/
-│   │   ├── admin-login.spec.ts    # Valid admin login test
-│   │   └── invalid-login.spec.ts  # Invalid credentials test
+│   │   ├── auth.setup.ts           # Playwright setup project (saves storage state)
+│   │   └── login.spec.ts           # Login happy/unhappy paths
+│   ├── accounts/
+│   │   └── accounts.spec.ts        # Accounts CRUD, filter, sort
 │   ├── dashboard/
-│   │   └── dashboard.spec.ts      # Dashboard page tests
-│   ├── e2e/                       # End-to-end flows
-│   └── forms/                     # Form interaction tests
+│   │   └── dashboard.spec.ts       # Stat cards, quick actions, drag-and-drop
+│   └── transactions/
+│       └── transactions.spec.ts    # Create, filter, export, detail view
 │
 ├── pages/                          # Page Object Model classes
-│   ├── LoginPage.ts               # Login page interactions
-│   └── DashboardPage.ts           # Dashboard page interactions
+│   ├── LoginPage.ts
+│   ├── DashboardPage.ts
+│   ├── AccountsPage.ts
+│   └── TransactionsPage.ts
 │
-├── utils/                          # Reusable utilities
-│   ├── testData.ts                # Test data, endpoints, fixtures
-│   └── fixtures.ts                # Playwright fixtures
+├── utils/
+│   ├── fixtures.ts                 # Custom test fixtures (adminPage → adminDashboardPage, etc.)
+│   └── testData.ts                 # Shared test data and endpoints
 │
-├── specs/                          # Test documentation and test plans
-│
-├── playwright.config.ts            # Playwright configuration
-├── package.json                    # Project dependencies
-├── package-lock.json
-├── tsconfig.json
-└── README.md                       # This file
-
+├── playwright.config.ts
+├── CLAUDE.md                       # Guidance for Claude Code AI assistant
+└── README.md
 ```
 
 ---
@@ -95,6 +94,7 @@ Install dependencies (first time only):
 
 ```bash
 npm install
+npx playwright install
 ```
 
 Run all tests:
@@ -102,13 +102,30 @@ Run all tests:
 npx playwright test
 ```
 
+Run a single spec file:
+```bash
+npx playwright test tests/dashboard/dashboard.spec.ts
+```
+
+Run a single test by name:
+```bash
+npx playwright test --grep "TC-DASH-02"
+```
+
+Run against a specific browser:
+```bash
+npx playwright test --project=chromium
+```
+
 View the HTML report:
 ```bash
 npx playwright show-report
 ```
 
-📝 Notes
+---
 
-This is a learning project – tests will be added, removed, and refactored frequently.
+## 📝 Notes
+
+This is a learning project — tests will be added, removed, and refactored frequently.
 Some patterns may change as I explore better approaches.
 The focus is on learning and hands‑on practice, not completeness.
