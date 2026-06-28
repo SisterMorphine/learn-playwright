@@ -48,12 +48,8 @@ test.describe('Dashboard Features Tests', () => {
 
             // Extract text from the fourthcolumn of each row
             const balanceText = await balanceCell[3].textContent() ?? '0';
-
             const balanceValue = parseFloat(balanceText.replace(/[^0-9.-]/g, ''));
-
             accountsTotal += balanceValue;
-
-            console.log(`Row ${i}: ${dashboardBalance} is ${accountsTotal}`);
         }
         expect(accountsTotal).toBeCloseTo(dashboardBalance, 2);
     });

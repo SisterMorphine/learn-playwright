@@ -84,7 +84,7 @@ test.describe('Accounts Features Tests', () => {
         const rows = accountsPage.accountsSection.locator('tbody tr');
         await expect(rows.first()).toContainText('Savings'); // Ensure there are rows to check
         const count = await accountsPage.countAccountRows();
-        for (let i = 1; i < count; i++) {
+        for (let i = 0; i < count; i++) {
             await expect(rows.nth(i)).toContainText('Savings');
         }
     });

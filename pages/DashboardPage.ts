@@ -41,7 +41,6 @@ export class DashboardPage {
         await expect(this.page.getByRole('navigation', { name: 'Bank navigation' })).toBeVisible();
     }
 
-    //method to click on the quick action buttons
     async clickQuickAction(action: 'addAccount' | 'newTransaction' | 'viewAllAccounts') {
         await this.quickActions[action].click();
     }
