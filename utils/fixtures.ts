@@ -7,6 +7,7 @@ export type TestFixtures = {
   adminPage: Page;
   adminDashboardPage: Page;
   adminAccountsPage: Page;
+  adminTransactionsPage: Page;
   loginPage: LoginPage;
 };
 
@@ -26,6 +27,11 @@ export const test = base.extend<TestFixtures>({
 
   adminAccountsPage: async ({ adminPage }, use) => {
     await adminPage.goto('/bank/accounts');
+    await use(adminPage);
+  },
+
+  adminTransactionsPage: async ({ adminPage }, use) => {
+    await adminPage.goto('/bank/transactions');
     await use(adminPage);
   },
 

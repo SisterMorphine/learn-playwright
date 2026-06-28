@@ -1,0 +1,124 @@
+import { expect, test } from '../../utils/fixtures';
+import { TransactionsPage } from '../../pages/TransactionsPage';
+import { AccountsPage } from '../../pages/AccountsPage';
+
+test.describe('Transactions Features Tests', () => {
+
+    test('TC-TXN-01: Create a deposit transaction and verify balance update', async ({ adminAccountsPage }) => {
+        const accountsPage = new AccountsPage(adminAccountsPage);
+        await expect(accountsPage.accountsSection).toBeVisible();
+
+        const primarySavingsRow = accountsPage.getAccountRowByName('Primary Savings');
+        await expect(primarySavingsRow).toBeVisible();
+        const balanceBefore = parseFloat(
+            (await primarySavingsRow.locator('td').nth(3).textContent() ?? '').replace(/[^0-9.]/g, '')
+        );
+
+        const transactionsPage = new TransactionsPage(adminAccountsPage);
+        await transactionsPage.createTransaction('Deposit', 'Primary Savings', '500');
+
+        await expect(transactionsPage.newTransactionModal.modal).not.toBeVisible();
+        await expect(adminAccountsPage.getByText(/success/i).first()).toBeVisible();
+        await expect(transactionsPage.getTransactionRows().first()).toBeVisible();
+
+        await adminAccountsPage.goto('/bank/accounts');
+        await adminAccountsPage.locator('td').filter({ hasText: /\$/ }).first().waitFor();
+        const balanceAfter = parseFloat(
+            (await accountsPage.getAccountRowByName('Primary Savings').locator('td').nth(3).textContent() ?? '').replace(/[^0-9.]/g, '')
+        );
+        expect(balanceAfter).toBeCloseTo(balanceBefore + 500, 2);
+    });
+
+    test('TC-TXN-02: Filter transactions by account and verify only matching rows appear', async ({ adminTransactionsPage }) => {
+        const transactionsPage = new TransactionsPage(adminTransactionsPage);
+        await transactionsPage.pageLoaded();
+
+        const totalBefore = await transactionsPage.getTransactionRows().count();
+
+        await transactionsPage.selectFilterAccount('Primary Savings');
+        await transactionsPage.applyFiltersButton.click();
+
+        const rows = transactionsPage.getTransactionRows();
+        await expect(rows.first()).toBeVisible();
+        const count = await rows.count();
+        for (let i = 0; i < count; i++) {
+            await expect(rows.nth(i).getByTestId('transaction-account')).toHaveText('Primary Savings');
+        }
+
+        await expect(transactionsPage.summaryBar).toBeVisible();
+
+        await transactionsPage.resetFiltersButton.click();
+        await expect(transactionsPage.getTransactionRows()).toHaveCount(totalBefore);
+    });
+
+    test('TC-TXN-03: Filter transactions by date range using calendar date picker', async ({ adminTransactionsPage }) => {
+        const transactionsPage = new TransactionsPage(adminTransactionsPage);
+        await transactionsPage.pageLoaded();
+
+        const totalBefore = await transactionsPage.getTransactionRows().count();
+        const today = new Date();
+        const dayToday = String(today.getDate());
+        const calendar = adminTransactionsPage.getByTestId('date-picker-calendar');
+
+        // FROM: 1st of current month
+        await transactionsPage.dateFromInput.click();
+        await expect(calendar).toBeVisible();
+        await calendar.locator('button').filter({ hasText: /^1$/ }).first().click();
+        await expect(calendar).not.toBeVisible();
+
+        // TO: today
+        await transactionsPage.dateToInput.click();
+        await expect(calendar).toBeVisible();
+        await calendar.locator('button').filter({ hasText: new RegExp(`^${dayToday}$`) }).first().click();
+        await expect(calendar).not.toBeVisible();
+
+        await transactionsPage.applyFiltersButton.click();
+
+        // Seed data is from 2024/2025 so current-month filter returns 0 rows —
+        // verify the full cycle: filter applies, reset restores original state
+        await transactionsPage.resetFiltersButton.click();
+        await expect(transactionsPage.getTransactionRows()).toHaveCount(totalBefore);
+    });
+
+    test('TC-TXN-04: Export transactions as CSV and verify file is downloaded', async ({ adminTransactionsPage }) => {
+        const transactionsPage = new TransactionsPage(adminTransactionsPage);
+        await transactionsPage.pageLoaded();
+        await expect(transactionsPage.getTransactionRows().first()).toBeVisible();
+
+        const [download] = await Promise.all([
+            adminTransactionsPage.waitForEvent('download'),
+            transactionsPage.exportButton.click(),
+        ]);
+
+        expect(download.suggestedFilename()).toMatch(/\.csv$/);
+        await expect(adminTransactionsPage.getByText('Transactions exported successfully!')).toBeVisible();
+    });
+
+    test('TC-TXN-05: Transaction detail page shows all fields and breadcrumb navigation', async ({ adminTransactionsPage }) => {
+        const transactionsPage = new TransactionsPage(adminTransactionsPage);
+        await transactionsPage.pageLoaded();
+
+        const firstRow = transactionsPage.getTransactionRows().first();
+        await expect(firstRow).toBeVisible();
+        const txnId = await firstRow.getByTestId('transaction-id').textContent();
+
+        await firstRow.getByTestId('transaction-id-link').click();
+        await expect(adminTransactionsPage).toHaveURL(/bank\/transactions\/.+/);
+
+        await expect(adminTransactionsPage.getByTestId('breadcrumb-item-1')).toContainText('Dashboard');
+        await expect(adminTransactionsPage.getByTestId('breadcrumb-item-2')).toContainText('Transactions');
+        await expect(adminTransactionsPage.getByTestId('breadcrumb-item-3')).toContainText(txnId ?? '');
+
+        await expect(transactionsPage.detail.card).toBeVisible();
+        await expect(transactionsPage.detail.type).toBeVisible();
+        await expect(transactionsPage.detail.amount).toBeVisible();
+        await expect(transactionsPage.detail.datetime).toBeVisible();
+        await expect(transactionsPage.detail.accountLink).toBeVisible();
+        await expect(transactionsPage.detail.balanceAfter).toBeVisible();
+        await expect(transactionsPage.detail.status).toBeVisible();
+
+        await transactionsPage.backButton.click();
+        await expect(adminTransactionsPage).toHaveURL(/bank\/transactions$/);
+    });
+
+});

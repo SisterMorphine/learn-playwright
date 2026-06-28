@@ -98,17 +98,16 @@ test.describe('Dashboard Features Tests', () => {
         const itemCount = await pinnedAccountItems.count();
         expect(itemCount).toBeGreaterThan(0);
 
-        await pinnedAccountItems.nth(0).dragTo(pinnedAccountItems.nth(itemCount - 1));
-        // Verify that the order of the pinned accounts has changed
+        // Capture order before drag
         const firstTextBefore = await pinnedAccountItems.nth(0).textContent();
-        const lastTextBefore = await pinnedAccountItems.nth(itemCount - 1).textContent();
 
         await pinnedAccountItems.nth(0).dragTo(pinnedAccountItems.nth(itemCount - 1));
 
+        // After dragging item 0 to last position: first slot changes, last slot holds what was first
         const firstTextAfter = await pinnedAccountItems.nth(0).textContent();
         const lastTextAfter = await pinnedAccountItems.nth(itemCount - 1).textContent();
 
-        expect(firstTextAfter).toBe(lastTextBefore);
+        expect(firstTextAfter).not.toBe(firstTextBefore);
         expect(lastTextAfter).toBe(firstTextBefore);
     });
 });
