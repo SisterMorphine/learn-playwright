@@ -46,6 +46,7 @@ export class AccountsPage {
     }
     async pageLoaded() {
         await expect(this.page).toHaveURL(/bank\/accounts/);
+        await expect(this.accountsSection).toBeVisible;
     }
 
     getFirstAccountRow(): Locator {

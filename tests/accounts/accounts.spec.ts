@@ -77,7 +77,7 @@ test.describe('Accounts Features Tests', () => {
     test('TC-ACC-04:Filter accounts by account type ', async ({ adminAccountsPage }) => {
         const accountsPage = new AccountsPage(adminAccountsPage);
         // Open the Account Type filter combobox and choose 'Savings'
-        await accountsPage.filterTypeSelect.isVisible();
+        await expect(accountsPage.filterTypeSelect).toBeVisible(); 
         await accountsPage.selectFilterType('Savings');
 
         // Verify that visible rows are of type Savings
