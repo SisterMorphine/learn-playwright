@@ -5,17 +5,23 @@ import { AccountsPage } from '../../pages/AccountsPage';
 test.describe('Transactions Features Tests', () => {
 
     test('TC-TXN-01: Create a deposit transaction and verify balance update', async ({ adminAccountsPage }) => {
+        //Go to Accounts page and get the first account, save the name and the balance
         const accountsPage = new AccountsPage(adminAccountsPage);
-        await expect(accountsPage.accountsSection).toBeVisible();
+        await accountsPage.pageLoaded(); 
+        
+        await adminAccountsPage.locator('td').filter({ hasText: /\$/ }).first().waitFor();
+        const primarySavingsRow = accountsPage.getFirstAccountRow(); 
 
-        const primarySavingsRow = accountsPage.getAccountRowByName('Primary Savings');
         await expect(primarySavingsRow).toBeVisible();
         const balanceBefore = parseFloat(
             (await primarySavingsRow.locator('td').nth(3).textContent() ?? '').replace(/[^0-9.]/g, '')
         );
+        const accountName = await accountsPage.getAccountNameFromRow(primarySavingsRow); 
 
         const transactionsPage = new TransactionsPage(adminAccountsPage);
-        await transactionsPage.createTransaction('Deposit', 'Primary Savings', '500');
+        if (!accountName) throw new Error('Failed to read account name');
+
+        await transactionsPage.createTransaction('Deposit', accountName, '500');
 
         await expect(transactionsPage.newTransactionModal.modal).not.toBeVisible();
         await expect(adminAccountsPage.getByText(/success/i).first()).toBeVisible();
@@ -24,7 +30,7 @@ test.describe('Transactions Features Tests', () => {
         await adminAccountsPage.goto('/bank/accounts');
         await adminAccountsPage.locator('td').filter({ hasText: /\$/ }).first().waitFor();
         const balanceAfter = parseFloat(
-            (await accountsPage.getAccountRowByName('Primary Savings').locator('td').nth(3).textContent() ?? '').replace(/[^0-9.]/g, '')
+            (await accountsPage.getAccountRowByName(accountName).locator('td').nth(3).textContent() ?? '').replace(/[^0-9.]/g, '')
         );
         expect(balanceAfter).toBeCloseTo(balanceBefore + 500, 2);
     });
