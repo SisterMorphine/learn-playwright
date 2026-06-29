@@ -7,16 +7,16 @@ test.describe('Transactions Features Tests', () => {
     test('TC-TXN-01: Create a deposit transaction and verify balance update', async ({ adminAccountsPage }) => {
         //Go to Accounts page and get the first account, save the name and the balance
         const accountsPage = new AccountsPage(adminAccountsPage);
-        await accountsPage.pageLoaded(); 
-        
+        await accountsPage.pageLoaded();
+
         await adminAccountsPage.locator('td').filter({ hasText: /\$/ }).first().waitFor();
-        const primarySavingsRow = accountsPage.getFirstAccountRow(); 
+        const primarySavingsRow = accountsPage.getFirstAccountRow();
 
         await expect(primarySavingsRow).toBeVisible();
         const balanceBefore = parseFloat(
             (await primarySavingsRow.locator('td').nth(3).textContent() ?? '').replace(/[^0-9.]/g, '')
         );
-        const accountName = await accountsPage.getAccountNameFromRow(primarySavingsRow); 
+        const accountName = await accountsPage.getAccountNameFromRow(primarySavingsRow);
 
         const transactionsPage = new TransactionsPage(adminAccountsPage);
         if (!accountName) throw new Error('Failed to read account name');
@@ -117,11 +117,11 @@ test.describe('Transactions Features Tests', () => {
 
         await expect(transactionsPage.detail.card).toBeVisible();
         await expect(transactionsPage.detail.type).toContainText(/Deposit|Withdrawal|Transfer/);
-        await expect(transactionsPage.detail.amount).toContainText(/\$[\d,]+\.\d{2}/); 
-        await expect(transactionsPage.detail.datetime).toContainText(/[A-Z][a-z]{2} \d{1,2}, \d{4}, \d{2}:\d{2} (AM|PM)/);
-        await expect(transactionsPage.detail.accountLink).toContainText(/\w+/);
+        await expect(transactionsPage.detail.amount).toContainText(/\$[\d,]+\.\d{2}/);
+        await expect(transactionsPage.detail.datetime).toContainText(/^[A-Z][a-z]{2} \d{1,2}, \d{4}(,| at) \d{2}:\d{2} (AM|PM)$/);
         await expect(transactionsPage.detail.balanceAfter).toContainText(/\$[\d,]+\.\d{2}/);
-        await expect(transactionsPage.detail.status).toContainText(/Completed|Pending|Failed/); 
+        await expect(transactionsPage.detail.accountLink).toContainText(/\w+(\s+\w+)*/); 
+        await expect(transactionsPage.detail.status).toContainText(/Completed|Pending|Failed/);
         await transactionsPage.backButton.click();
         await expect(adminTransactionsPage).toHaveURL(/bank\/transactions$/);
     });
