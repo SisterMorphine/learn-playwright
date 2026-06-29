@@ -18,7 +18,11 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: undefined,
-  reporter: 'html',
+  reporter: [
+    ['html'],
+    ['json', { outputFile: 'test-results/results.json' }],
+    ['./reporters/MetricsReporter.ts'],
+  ],
   timeout: 60000,
   expect: { timeout: 10000 },
   use: {
@@ -36,7 +40,12 @@ export default defineConfig({
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: {
+        ...devices['Desktop Safari'],
+        navigationTimeout: 30000,
+        actionTimeout: 15000,
+      },
+
       dependencies: ['setup'],
     },
 
