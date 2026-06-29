@@ -116,13 +116,12 @@ test.describe('Transactions Features Tests', () => {
         await expect(adminTransactionsPage.getByTestId('breadcrumb-item-3')).toContainText(txnId ?? '');
 
         await expect(transactionsPage.detail.card).toBeVisible();
-        await expect(transactionsPage.detail.type).toBeVisible();
-        await expect(transactionsPage.detail.amount).toBeVisible();
-        await expect(transactionsPage.detail.datetime).toBeVisible();
-        await expect(transactionsPage.detail.accountLink).toBeVisible();
-        await expect(transactionsPage.detail.balanceAfter).toBeVisible();
-        await expect(transactionsPage.detail.status).toBeVisible();
-
+        await expect(transactionsPage.detail.type).toContainText(/Deposit|Withdrawal|Transfer/);
+        await expect(transactionsPage.detail.amount).toContainText(/\$[\d,]+\.\d{2}/); 
+        await expect(transactionsPage.detail.datetime).toContainText(/[A-Z][a-z]{2} \d{1,2}, \d{4}, \d{2}:\d{2} (AM|PM)/);
+        await expect(transactionsPage.detail.accountLink).toContainText(/\w+/);
+        await expect(transactionsPage.detail.balanceAfter).toContainText(/\$[\d,]+\.\d{2}/);
+        await expect(transactionsPage.detail.status).toContainText(/Completed|Pending|Failed/); 
         await transactionsPage.backButton.click();
         await expect(adminTransactionsPage).toHaveURL(/bank\/transactions$/);
     });
