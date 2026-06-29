@@ -72,3 +72,12 @@ await page.getByRole('option', { name: 'Savings' }).click();
 2. `getByTestId` — for elements with `data-testid`
 3. `getByText` / `getByLabel` — for text-driven elements
 4. CSS selectors — avoid; only acceptable for `data-testid` partial matching when `getByTestId` cannot express the pattern
+
+## playwright-cli
+
+`playwright-cli` is available globally. Use it to inspect the live app before writing or debugging tests:
+- Check real element structure, aria-labels, and data-testid values
+- Observe dynamic behavior (animations, loading states, toasts)
+- Diagnose flaky tests by watching what actually happens in the browser
+
+Open with: `playwright-cli open https://qaplayground.com/bank` then log in as admin/admin123.
