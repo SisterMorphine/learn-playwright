@@ -12,7 +12,6 @@ export class TransactionsPage {
     readonly summaryBar: Locator;
     readonly transactionsTable: Locator;
     readonly transactionsTbody: Locator;
-    readonly newTransactionButton: Locator;
     readonly newTransactionModal: {
         modal: Locator;
         transactionTypeSelect: Locator;
@@ -48,7 +47,6 @@ export class TransactionsPage {
         this.summaryBar = page.getByTestId('transactions-summary-bar');
         this.transactionsTable = page.getByTestId('transactions-table');
         this.transactionsTbody = page.getByTestId('transactions-tbody');
-        this.newTransactionButton = page.getByTestId('new-transaction-button');
         this.newTransactionModal = {
             modal: page.getByTestId('transaction-modal'),
             transactionTypeSelect: page.getByTestId('transaction-type-select'),
@@ -101,5 +99,6 @@ export class TransactionsPage {
         await this.page.getByRole('option', { name: account }).click();
         await this.newTransactionModal.amountInput.fill(amount);
         await this.newTransactionModal.submitButton.click();
+        await expect(this.newTransactionModal.modal).not.toBeVisible();
     }
 }
