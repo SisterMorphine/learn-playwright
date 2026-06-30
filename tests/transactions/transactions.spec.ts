@@ -62,26 +62,20 @@ test.describe('Transactions Features Tests', () => {
         await transactionsPage.pageLoaded();
 
         const totalBefore = await transactionsPage.getTransactionRows().count();
-        const today = new Date();
-        const dayToday = String(today.getDate());
-        const calendar = adminTransactionsPage.getByTestId('date-picker-calendar');
 
         // FROM: 1st of current month
         await transactionsPage.dateFromInput.click();
-        await expect(calendar).toBeVisible();
-        await calendar.locator('button').filter({ hasText: /^1$/ }).first().click();
-        await expect(calendar).not.toBeVisible();
+        await expect(transactionsPage.calendar).toBeVisible();
+        await expect (transactionsPage.calendar.locator('button').filter({ hasText: /^1$/ }).first().click());
+        await expect(transactionsPage.dateFromInput).not.toContainText('Pick start date');
 
         // TO: today
         await transactionsPage.dateToInput.click();
-        await expect(calendar).toBeVisible();
-        await calendar.locator('button').filter({ hasText: new RegExp(`^${dayToday}$`) }).first().click();
-        await expect(calendar).not.toBeVisible();
+        await expect(transactionsPage.calendar).toBeVisible();
+        await transactionsPage.calendar.getByRole('button', { name: /Today/ }).click();
+        await expect(transactionsPage.dateToInput).not.toContainText('Pick a date');
 
         await transactionsPage.applyFiltersButton.click();
-
-        // Seed data is from 2024/2025 so current-month filter returns 0 rows —
-        // verify the full cycle: filter applies, reset restores original state
         await transactionsPage.resetFiltersButton.click();
         await expect(transactionsPage.getTransactionRows()).toHaveCount(totalBefore);
     });
@@ -91,13 +85,13 @@ test.describe('Transactions Features Tests', () => {
         await transactionsPage.pageLoaded();
         await expect(transactionsPage.getTransactionRows().first()).toBeVisible();
 
+        const toastVisible = expect(adminTransactionsPage.getByText('Transactions exported successfully!')).toBeVisible();
         const [download] = await Promise.all([
             adminTransactionsPage.waitForEvent('download'),
             transactionsPage.exportButton.click(),
         ]);
-
+        await toastVisible;
         expect(download.suggestedFilename()).toMatch(/\.csv$/);
-        await expect(adminTransactionsPage.getByText('Transactions exported successfully!')).toBeVisible();
     });
 
     test('TC-TXN-05: Transaction detail page shows all fields and breadcrumb navigation', async ({ adminTransactionsPage }) => {
@@ -120,7 +114,7 @@ test.describe('Transactions Features Tests', () => {
         await expect(transactionsPage.detail.amount).toContainText(/\$[\d,]+\.\d{2}/);
         await expect(transactionsPage.detail.datetime).toContainText(/^[A-Z][a-z]{2} \d{1,2}, \d{4}(,| at) \d{2}:\d{2} (AM|PM)$/);
         await expect(transactionsPage.detail.balanceAfter).toContainText(/\$[\d,]+\.\d{2}/);
-        await expect(transactionsPage.detail.accountLink).toContainText(/\w+(\s+\w+)*/); 
+        await expect(transactionsPage.detail.accountLink).toContainText(/\w+(\s+\w+)*/);
         await expect(transactionsPage.detail.status).toContainText(/Completed|Pending|Failed/);
         await transactionsPage.backButton.click();
         await expect(adminTransactionsPage).toHaveURL(/bank\/transactions$/);

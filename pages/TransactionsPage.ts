@@ -6,6 +6,7 @@ export class TransactionsPage {
     readonly filterTypeSelect: Locator;
     readonly dateFromInput: Locator;
     readonly dateToInput: Locator;
+    readonly calendar: Locator;
     readonly applyFiltersButton: Locator;
     readonly resetFiltersButton: Locator;
     readonly exportButton: Locator;
@@ -41,6 +42,7 @@ export class TransactionsPage {
         this.filterTypeSelect = page.getByTestId('filter-transaction-type-select');
         this.dateFromInput = page.getByTestId('date-from-input');
         this.dateToInput = page.getByTestId('date-to-input');
+        this.calendar = page.locator('[data-testid="date-picker-calendar"][data-state="open"]')
         this.applyFiltersButton = page.getByTestId('apply-filters-button');
         this.resetFiltersButton = page.getByTestId('reset-filters-button');
         this.exportButton = page.getByTestId('export-button');
