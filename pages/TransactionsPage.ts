@@ -104,6 +104,10 @@ export class TransactionsPage {
         return this.summmaryTransactionsCount;
     }
 
+    public getSummaryBar(): Locator {
+        return this.summaryBar;
+    }
+
     public getTransactionDetailCard(): TransactionDetails {
         const transactionDetail = this.transactionDetail;
         transactionDetail.card = this.transactionDetail.card;
