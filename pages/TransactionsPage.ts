@@ -36,7 +36,6 @@ export class TransactionsPage {
     private readonly transactionsTable: Locator;
     private readonly transactionsTbody: Locator;
     private readonly newTransactionModal: NewTransactionModal;
-    private readonly breadcrumb: Locator;
     private readonly backButton: Locator;
     private readonly transactionDetail: TransactionDetails;
     private readonly summmaryTransactionsCount: Locator;
@@ -63,7 +62,6 @@ export class TransactionsPage {
             submitButton: page.getByTestId('submit-transaction-button'),
             cancelButton: page.getByTestId('cancel-transaction-button'),
         };
-        this.breadcrumb = page.getByTestId('breadcrumb');
         this.backButton = page.getByTestId('back-button');
         this.transactionDetail = {
             card: page.getByTestId('transaction-detail-card'),
