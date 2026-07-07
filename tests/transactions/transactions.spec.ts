@@ -1,6 +1,7 @@
 import { expect, test } from '../../utils/fixtures';
 import { TransactionsPage } from '../../pages/TransactionsPage';
 import { AccountsPage } from '../../pages/AccountsPage';
+import { count } from 'console';
 
 test.describe.serial('Transactions Features Tests', () => {
 
@@ -23,7 +24,9 @@ test.describe.serial('Transactions Features Tests', () => {
 
         await transactionsPage.createTransaction('Deposit', accountName, '500');
 
-        await expect(transactionsPage.newTransactionModal.modal).not.toBeVisible();
+        const transactionModal = transactionsPage.getNewTransactionModal();
+        await expect(transactionModal.modal).not.toBeVisible();
+
         await expect(adminAccountsPage.getByText(/success/i).first()).toBeVisible();
         await expect(transactionsPage.getTransactionRows().first()).toBeVisible();
 
@@ -42,7 +45,7 @@ test.describe.serial('Transactions Features Tests', () => {
         const totalBefore = await transactionsPage.getTransactionRows().count();
 
         await transactionsPage.selectFilterAccount('Primary Savings');
-        await transactionsPage.applyFiltersButton.click();
+        await transactionsPage.clickOnApplyFilterButton();
 
         const rows = transactionsPage.getTransactionRows();
         await expect(rows.first()).toBeVisible();
@@ -51,12 +54,12 @@ test.describe.serial('Transactions Features Tests', () => {
             await expect(rows.nth(i).getByTestId('transaction-account')).toHaveText('Primary Savings');
         }
 
-        await expect(transactionsPage.summaryBar).toBeVisible();
+        const summaryBar = transactionsPage.getSummaryBar();
+        await expect(summaryBar).toBeVisible();
 
-        await transactionsPage.resetFiltersButton.click();
-        const countAfter = await transactionsPage.getTransactionRows().count(); 
+        await transactionsPage.clickOnResetFiltersButton();
+        const countAfter = await transactionsPage.getTransactionRows().count();
         expect(countAfter).toBeGreaterThanOrEqual(totalBefore);
-        //await expect(transactionsPage.getTransactionRows()).toHaveCount(totalBefore);
     });
 
     test('TC-TXN-03: Filter transactions by date range using calendar date picker', async ({ adminTransactionsPage }) => {
@@ -66,19 +69,22 @@ test.describe.serial('Transactions Features Tests', () => {
         const totalBefore = await transactionsPage.getTransactionRows().count();
 
         // FROM: 1st of current month
-        await transactionsPage.dateFromInput.click();
-        await expect(transactionsPage.calendar).toBeVisible();
-        await expect(transactionsPage.calendar.locator('button').filter({ hasText: /^1$/ }).first().click());
-        await expect(transactionsPage.dateFromInput).not.toContainText('Pick start date');
+        const dateFromInput = transactionsPage.getInputDateFrom();
+        await dateFromInput.click();
+        const calendar = transactionsPage.getCalendar();
+        await expect(calendar).toBeVisible();
+        await expect(calendar.locator('button').filter({ hasText: /^1$/ }).first().click());
+        await expect(dateFromInput).not.toContainText('Pick start date');
 
         // TO: today
-        await transactionsPage.dateToInput.click();
-        await expect(transactionsPage.calendar).toBeVisible();
-        await transactionsPage.calendar.getByRole('button', { name: /Today/ }).click();
-        await expect(transactionsPage.dateToInput).not.toContainText('Pick a date');
+        const dateToInput = transactionsPage.getInputDateTo();
+        await dateToInput.click();
+        await expect(calendar).toBeVisible();
+        await calendar.getByRole('button', { name: /Today/ }).click();
+        await expect(dateToInput).not.toContainText('Pick a date');
 
-        await transactionsPage.applyFiltersButton.click();
-        await transactionsPage.resetFiltersButton.click();
+        await transactionsPage.clickOnApplyFilterButton();
+        await transactionsPage.clickOnResetFiltersButton();
         await expect(transactionsPage.getTransactionRows()).toHaveCount(totalBefore);
     });
 
@@ -90,7 +96,7 @@ test.describe.serial('Transactions Features Tests', () => {
         const toastVisible = expect(adminTransactionsPage.getByText('Transactions exported successfully!')).toBeVisible();
         const [download] = await Promise.all([
             adminTransactionsPage.waitForEvent('download'),
-            transactionsPage.exportButton.click(),
+            await transactionsPage.clickOnDownloadButton()
         ]);
         await toastVisible;
         expect(download.suggestedFilename()).toMatch(/\.csv$/);
@@ -111,15 +117,36 @@ test.describe.serial('Transactions Features Tests', () => {
         await expect(adminTransactionsPage.getByTestId('breadcrumb-item-2')).toContainText('Transactions');
         await expect(adminTransactionsPage.getByTestId('breadcrumb-item-3')).toContainText(txnId ?? '');
 
-        await expect(transactionsPage.detail.card).toBeVisible();
-        await expect(transactionsPage.detail.type).toContainText(/Deposit|Withdrawal|Transfer/);
-        await expect(transactionsPage.detail.amount).toContainText(/\$[\d,]+\.\d{2}/);
-        await expect(transactionsPage.detail.datetime).toContainText(/^[A-Z][a-z]{2} \d{1,2}, \d{4}(,| at) \d{2}:\d{2} (AM|PM)$/);
-        await expect(transactionsPage.detail.balanceAfter).toContainText(/\$[\d,]+\.\d{2}/);
-        await expect(transactionsPage.detail.accountLink).toContainText(/\w+(\s+\w+)*/);
-        await expect(transactionsPage.detail.status).toContainText(/Completed|Pending|Failed/);
-        await transactionsPage.backButton.click();
+        const transactionsDetail = transactionsPage.getTransactionDetailCard();
+        await expect(transactionsDetail.card).toBeVisible();
+        await expect(transactionsDetail.type).toContainText(/Deposit|Withdrawal|Transfer/);
+        await expect(transactionsDetail.amount).toContainText(/\$[\d,]+\.\d{2}/);
+        await expect(transactionsDetail.datetime).toContainText(/^[A-Z][a-z]{2} \d{1,2}, \d{4}(,| at) \d{2}:\d{2} (AM|PM)$/);
+        await expect(transactionsDetail.balanceAfter).toContainText(/\$[\d,]+\.\d{2}/);
+        await expect(transactionsDetail.accountLink).toContainText(/\w+(\s+\w+)*/);
+        await expect(transactionsDetail.description).toContainText(/.+/);
+        await expect(transactionsDetail.status).toContainText(/Completed|Pending|Failed/);
+        await transactionsPage.clickOnBackButton();
         await expect(adminTransactionsPage).toHaveURL(/bank\/transactions$/);
+    });
+
+    test('TC-TXN-06: Verify that the summary displays the correct number of transactions', async ({ adminTransactionsPage }) => {
+        const transactionsPage = new TransactionsPage(adminTransactionsPage);
+        await transactionsPage.pageLoaded();
+
+        const summaryCount = transactionsPage.getSummaryTransactionsCount()
+        await expect(summaryCount).toBeVisible();
+        await expect(summaryCount).toContainText(/\d+ transactions?/);
+
+        const summaryCountText = await summaryCount.textContent();
+        const summaryCountValue = parseInt(summaryCountText ?? '0', 10);
+
+        const table = transactionsPage.getTransactionRows();
+        await expect(table).toBeVisible();
+        const totalRows = await transactionsPage.getTransactionRows().count();
+
+        await expect(totalRows).toBeCloseTo(summaryCountValue);
+
     });
 
 });
