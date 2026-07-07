@@ -1,7 +1,6 @@
 import { test as base, Page } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
-import { AccountsPage } from '../pages/AccountsPage';
 
 export type TestFixtures = {
   adminPage: Page;

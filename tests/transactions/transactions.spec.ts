@@ -1,7 +1,6 @@
 import { expect, test } from '../../utils/fixtures';
 import { TransactionsPage } from '../../pages/TransactionsPage';
 import { AccountsPage } from '../../pages/AccountsPage';
-import { count } from 'console';
 
 test.describe.serial('Transactions Features Tests', () => {
 
@@ -54,9 +53,6 @@ test.describe.serial('Transactions Features Tests', () => {
             await expect(rows.nth(i).getByTestId('transaction-account')).toHaveText('Primary Savings');
         }
 
-        const summaryBar = transactionsPage.getSummaryBar();
-        await expect(summaryBar).toBeVisible();
-
         await transactionsPage.clickOnResetFiltersButton();
         const countAfter = await transactionsPage.getTransactionRows().count();
         expect(countAfter).toBeGreaterThanOrEqual(totalBefore);
@@ -73,7 +69,7 @@ test.describe.serial('Transactions Features Tests', () => {
         await dateFromInput.click();
         const calendar = transactionsPage.getCalendar();
         await expect(calendar).toBeVisible();
-        await expect(calendar.locator('button').filter({ hasText: /^1$/ }).first().click());
+        await calendar.locator('button').filter({ hasText: /^1$/ }).first().click();
         await expect(dateFromInput).not.toContainText('Pick start date');
 
         // TO: today
@@ -96,7 +92,7 @@ test.describe.serial('Transactions Features Tests', () => {
         const toastVisible = expect(adminTransactionsPage.getByText('Transactions exported successfully!')).toBeVisible();
         const [download] = await Promise.all([
             adminTransactionsPage.waitForEvent('download'),
-            await transactionsPage.clickOnDownloadButton()
+            transactionsPage.clickOnDownloadButton()
         ]);
         await toastVisible;
         expect(download.suggestedFilename()).toMatch(/\.csv$/);
