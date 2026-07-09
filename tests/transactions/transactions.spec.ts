@@ -24,7 +24,7 @@ test.describe.serial('Transactions Features Tests', () => {
         await transactionsPage.createTransaction('Deposit', accountName, '500');
 
         const transactionModal = transactionsPage.getNewTransactionModal();
-        await expect(transactionModal.modal).not.toBeVisible();
+        await expect(transactionModal.modal).toBeHidden();
 
         await expect(adminAccountsPage.getByText(/success/i).first()).toBeVisible();
         await expect(transactionsPage.getTransactionRows().first()).toBeVisible();
@@ -141,7 +141,7 @@ test.describe.serial('Transactions Features Tests', () => {
         await expect(table).toBeVisible();
         const totalRows = await transactionsPage.getTransactionRows().count();
 
-        await expect(totalRows).toBeCloseTo(summaryCountValue);
+        expect(totalRows).toBeCloseTo(summaryCountValue);
 
     });
 
