@@ -84,7 +84,6 @@ test.describe('Dashboard Features Tests', () => {
     });
 
     test('TC-DASH-05: Pinned Accounts section supports drag and drop reordering', async ({ adminDashboardPage }) => {
-        const dashboardPage = new DashboardPage(adminDashboardPage);
         //Locate the Pinned Accounts section: data-testid='pinned-accounts-section'
         const pinnedAccountsSection = adminDashboardPage.getByTestId('pinned-accounts-section');
         await expect(pinnedAccountsSection).toBeVisible();
