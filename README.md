@@ -48,6 +48,7 @@ The Bank Demo provides:
 - **Playwright**
 - **TypeScript**
 - **Node.js**
+- **ESLint** (with `typescript-eslint` and `eslint-plugin-playwright`)
 - **GitHub Actions** (CI)
 
 ---
@@ -120,6 +121,11 @@ npx playwright test --project=chromium
 View the HTML report:
 ```bash
 npx playwright show-report
+```
+
+Run ESLint:
+```bash
+npx eslint .
 ```
 
 ---
