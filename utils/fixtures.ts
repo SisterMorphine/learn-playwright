@@ -4,7 +4,6 @@ import { DashboardPage } from '../pages/DashboardPage';
 
 export type TestFixtures = {
   adminPage: Page;
-  adminDashboardPage: Page;
   adminAccountsPage: Page;
   adminTransactionsPage: Page;
   loginPage: LoginPage;
@@ -18,10 +17,6 @@ export const test = base.extend<TestFixtures>({
     await loginPage.login('admin', 'admin123');
     await new DashboardPage(page).pageLoaded();
     await use(page);
-  },
-
-  adminDashboardPage: async ({ adminPage }, use) => {
-    await use(adminPage);
   },
 
   adminAccountsPage: async ({ adminPage }, use) => {

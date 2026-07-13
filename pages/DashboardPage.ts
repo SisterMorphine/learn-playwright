@@ -38,7 +38,7 @@ export class DashboardPage {
 
     async pageLoaded() {
         await expect(this.page).toHaveURL(/bank\/dashboard/);
-        await expect(this.page.getByRole('navigation', { name: 'Bank navigation' })).toBeVisible();
+        await expect(this.page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
     }
 
     async clickQuickAction(action: 'addAccount' | 'newTransaction' | 'viewAllAccounts') {

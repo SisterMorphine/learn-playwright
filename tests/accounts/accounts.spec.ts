@@ -4,20 +4,20 @@ import { AccountsPage } from '../../pages/AccountsPage';
 
 test.describe('Accounts Features Tests', () => {
 
-    test('TC-ACC-01: Create a new account using Quick action from Dashboard ', async ({ adminDashboardPage }) => {
-        const dashboardPage = new DashboardPage(adminDashboardPage);
+    test('TC-ACC-01: Create a new account using Quick action from Dashboard', async ({ adminPage }) => {
+        const dashboardPage = new DashboardPage(adminPage);
         await expect(dashboardPage.quickActions.addAccount).toBeVisible();
 
         await dashboardPage.clickQuickAction('addAccount');
-        const accountsPage = new AccountsPage(adminDashboardPage)
+        const accountsPage = new AccountsPage(adminPage)
         await expect(accountsPage.newAccountModal.modal).toBeVisible(); // Verify that the accounts page is displayed
-        await expect(adminDashboardPage).toHaveURL(/bank\/accounts/);
+        await expect(adminPage).toHaveURL(/bank\/accounts/);
 
         // Fill in the account creation form
         await accountsPage.newAccountModal.accountForm.accountNameInput.fill('Test Account');
         // account type is implemented as a custom combobox — open it and click the option
         await accountsPage.newAccountModal.accountForm.accountTypeSelect.click();
-        await adminDashboardPage.getByRole('option', { name: 'Savings' }).click();
+        await adminPage.getByRole('option', { name: 'Savings' }).click();
         await accountsPage.newAccountModal.accountForm.initialBalanceInput.fill('1000');
 
         // Submit the form
@@ -29,7 +29,7 @@ test.describe('Accounts Features Tests', () => {
         await expect(newAccountRow).toBeVisible();
     });
 
-    test('TC-ACC-02: Edit account name and saving the changes ', async ({ adminAccountsPage }) => {
+    test('TC-ACC-02: Edit account name and saving the changes', async ({ adminAccountsPage }) => {
         const accountsPage = new AccountsPage(adminAccountsPage);
 
         //Pick up the first row of the accounts table and click the Edit button
@@ -54,7 +54,7 @@ test.describe('Accounts Features Tests', () => {
         await expect(updatedRow).toBeVisible();
     });
 
-    test('TC-ACC-03: Delete an account with confirmation and verify it is removed ', async ({ adminAccountsPage }) => {
+    test('TC-ACC-03: Delete an account with confirmation and verify it is removed', async ({ adminAccountsPage }) => {
         const accountsPage = new AccountsPage(adminAccountsPage);
         const targetRow = accountsPage.getFirstAccountRow()
         //save in a variable the account name of the row to be deleted
@@ -74,10 +74,10 @@ test.describe('Accounts Features Tests', () => {
         await expect(rowToBeDeleted).toHaveCount(0);
     });
 
-    test('TC-ACC-04:Filter accounts by account type ', async ({ adminAccountsPage }) => {
+    test('TC-ACC-04:Filter accounts by account type', async ({ adminAccountsPage }) => {
         const accountsPage = new AccountsPage(adminAccountsPage);
         // Open the Account Type filter combobox and choose 'Savings'
-        await expect(accountsPage.filterTypeSelect).toBeVisible(); 
+        await expect(accountsPage.filterTypeSelect).toBeVisible();
         await accountsPage.selectFilterType('Savings');
 
         // Verify that visible rows are of type Savings
@@ -89,7 +89,7 @@ test.describe('Accounts Features Tests', () => {
         }
     });
 
-    test('TC-ACC-05:Sort accounts by balance column header ', async ({ adminAccountsPage }) => {
+    test('TC-ACC-05:Sort accounts by balance column header', async ({ adminAccountsPage }) => {
         const accountsPage = new AccountsPage(adminAccountsPage);
         // Helper to parse balance text like "$2,500.00" -> number
         const parseBalance = async (rowIndex: number) => {

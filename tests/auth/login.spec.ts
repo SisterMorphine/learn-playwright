@@ -1,9 +1,7 @@
-// spec: specs/login-test-plan.md
-// seed: tests/seed.spec.ts
-
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../pages/LoginPage';
 import { DashboardPage } from '../../pages/DashboardPage';
+import { TEST_USERS } from '../../utils/testData';
 
 test.describe('Login Feature Tests', () => {
 
@@ -12,7 +10,7 @@ test.describe('Login Feature Tests', () => {
     await loginPage.goto();
     await loginPage.pageLoaded();
 
-    await loginPage.login('admin', 'admin123');
+    await loginPage.login(TEST_USERS.admin.username, TEST_USERS.admin.password);
 
     await new DashboardPage(page).pageLoaded();
   });
@@ -22,7 +20,7 @@ test.describe('Login Feature Tests', () => {
     await loginPage.goto();
     await loginPage.pageLoaded();
 
-    await loginPage.login('viewer', 'viewer123');
+    await loginPage.login(TEST_USERS.viewer.username, TEST_USERS.viewer.password);
 
     await new DashboardPage(page).pageLoaded();
   });
@@ -38,14 +36,14 @@ test.describe('Login Feature Tests', () => {
     const usernameInput = loginPage.getUsernameInput();
     await expect(usernameInput).toBeVisible();
     await expect(usernameInput).toHaveValue('invaliduser');
-    
+
     const passwordInput = loginPage.getPasswordInput();
     await expect(passwordInput).toBeVisible();
     await expect(passwordInput).toHaveValue('wrongpassword');
-    
-    const loginAlert = loginPage.getLoginAlert();
-    await expect(loginAlert).toBeVisible();
-    await expect(loginAlert).toContainText('Invalid username or password. Please try again');
+
+    const loginErrorMessageText = await loginPage.getLoginErrorMessageText();
+    expect(loginErrorMessageText).toContain('The username or password you entered is incorrect.');
+
   });
 
   test('TC-LOGIN-04: Empty form validation', async ({ page }) => {
@@ -55,13 +53,10 @@ test.describe('Login Feature Tests', () => {
 
     await loginPage.clickLoginButton();
 
-    const usernameErrorMessage = loginPage.getUsernameErrorMessage();
-    await expect(usernameErrorMessage).toBeVisible();
+    const loginErrorMessageText = await loginPage.getLoginErrorMessageText();
+    expect(loginErrorMessageText).toContain('Please enter your username.');
 
-    const passwordErrorMessage = loginPage.getPasswordErrorMessage();
-    await expect(passwordErrorMessage).toBeVisible();
-
-    await expect(page).toHaveURL('/bank');
+    await expect(page).toHaveURL('/bank/login');
   });
 
   test('TC-LOGIN-05: Username field only validation', async ({ page }) => {
@@ -72,11 +67,10 @@ test.describe('Login Feature Tests', () => {
     await loginPage.fillUsername('admin');
     await loginPage.clickLoginButton();
 
-    const passwordErrorMessage = loginPage.getPasswordErrorMessage();
-    await expect(passwordErrorMessage).toBeVisible();
-    await expect(passwordErrorMessage).toContainText('Password is required');
+    const loginErrorMessageText = await loginPage.getLoginErrorMessageText();
+    expect(loginErrorMessageText).toContain('Please enter your password.');
 
-    await expect(page).toHaveURL('/bank');
+    await expect(page).toHaveURL('/bank/login');
     await expect(loginPage.getUsernameInput()).toHaveValue('admin');
   });
 
@@ -84,14 +78,14 @@ test.describe('Login Feature Tests', () => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.pageLoaded();
-    
+
     await loginPage.fillPassword('admin123');
     await loginPage.clickLoginButton();
 
-    const usernameErrorMessage = loginPage.getUsernameErrorMessage();
-    await expect(usernameErrorMessage).toBeVisible();
-    await expect(usernameErrorMessage).toContainText('Username is required');
+    const loginErrorMessageText = await loginPage.getLoginErrorMessageText();
+    expect(loginErrorMessageText).toContain('Please enter your username.');
 
+    await expect(page).toHaveURL('/bank/login');
     await loginPage.pageLoaded();
   });
 
@@ -112,20 +106,4 @@ test.describe('Login Feature Tests', () => {
     await expect(passwordInput).toHaveAttribute('type', 'password');
   });
 
-  test('TC-LOGIN-08: Clear form button functionality', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
-    await loginPage.pageLoaded();
-
-    await loginPage.fillUsername('admin');
-    await loginPage.fillPassword('admin123');
-    const usernameinput = loginPage.getUsernameInput();
-    await expect(usernameinput).toHaveValue('admin');
-
-    await loginPage.clickClearButton ();
-
-    const passwordInput = loginPage.getPasswordInput();
-    await expect(passwordInput).toBeEmpty();
-    await expect(usernameinput).toBeEmpty();
-  });
 });

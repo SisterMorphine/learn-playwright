@@ -3,6 +3,7 @@ import { writeFileSync, mkdirSync } from 'fs';
 
 type TestMetric = {
   name: string;
+  project: string;
   status: string;
   flaky: boolean;
   duration_ms: number;
@@ -13,12 +14,15 @@ class MetricsReporter implements Reporter {
   private results = new Map<string, TestMetric>();
 
   onTestEnd(test: TestCase, result: TestResult) {
-    const existing = this.results.get(test.id);
+    const project = test.titlePath()[0];
+    const key = `${test.id}::${project}`;
+    const existing = this.results.get(key);
     const flaky = (result.status === 'passed' && result.retry > 0)
                   || (existing?.status === 'failed' && result.status === 'passed');
 
-    this.results.set(test.id, {
-      name: test.titlePath().join(' > '),
+    this.results.set(key, {
+      name: test.titlePath().slice(1).join(' > '),
+      project,
       status: result.status,
       flaky,
       duration_ms: result.duration,

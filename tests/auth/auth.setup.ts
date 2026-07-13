@@ -11,7 +11,8 @@ setup.beforeAll(() => {
 setup('authenticate as admin', async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.goto();
-  await loginPage.login('admin', 'admin123');
+  await loginPage.pageLoaded();
+  await loginPage.login('admin_user', 'admin_sauce');
   await new DashboardPage(page).pageLoaded();
   await page.context().storageState({ path: AUTH_FILES.admin });
 });
@@ -19,7 +20,7 @@ setup('authenticate as admin', async ({ page }) => {
 setup('authenticate as viewer', async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.goto();
-  await loginPage.login('viewer', 'viewer123');
+  await loginPage.login('standard_user', 'bank_sauce');
   await new DashboardPage(page).pageLoaded();
   await page.context().storageState({ path: AUTH_FILES.viewer });
 });

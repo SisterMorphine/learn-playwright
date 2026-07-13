@@ -1,5 +1,5 @@
 export const TEST_URLS = {
-  login: 'https://qaplayground.com/bank',
+  login: 'https://qaplayground.com/bank/login',
   dashboard: 'https://qaplayground.com/bank/dashboard'
 };
 
@@ -26,3 +26,14 @@ export function getCatAPIHeaders() {
     'x-api-key': API_KEYS.catAPI,
   };
 }
+
+export const TEST_USERS = {
+  admin: {
+    username: 'admin_user',
+    password: 'admin_sauce',
+  },
+  viewer: {
+    username: 'standard_user',
+    password: 'bank_sauce',
+  },
+};

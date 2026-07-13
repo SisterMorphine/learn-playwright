@@ -5,26 +5,20 @@ export class LoginPage {
     private readonly usernameInput: Locator;
     private readonly passwordInput: Locator;
     private readonly loginButton: Locator;
-    private readonly passwordErrorMessage: Locator;
-    private readonly usernameErrorMessage: Locator;
+    private readonly loginErrorMessage: Locator;
     private readonly togglePasswordButton: Locator;
-    private readonly clearButton: Locator;
-    private readonly loginAlert: Locator;   
 
     constructor(page: Page) {
         this.page = page;
-        this.usernameInput = page.getByTestId('username-input');
-        this.passwordInput = page.getByTestId('password-input');
-        this.loginButton = page.getByTestId('login-button');
-        this.passwordErrorMessage = page.getByTestId('password-error');
-        this.usernameErrorMessage = page.getByTestId('username-error');
-        this.togglePasswordButton = page.getByTestId('toggle-password-btn');
-        this.clearButton = page.getByTestId('clear-button');
-        this.loginAlert = page.getByTestId('login-alert');
+        this.usernameInput = page.getByTestId('login-username-input');
+        this.passwordInput = page.getByTestId('login-password-input');
+        this.loginButton = page.getByTestId('login-submit-btn');
+        this.loginErrorMessage = page.getByTestId('login-error-message');
+        this.togglePasswordButton = page.getByRole('button', { name: /Show password|Hide password/ })
     }
 
     public async goto() {
-        await this.page.goto('/bank');
+        await this.page.goto('/bank/login');
     }
     
     public getUsernameInput(): Locator {
@@ -35,28 +29,12 @@ export class LoginPage {
         return this.passwordInput;
     }       
 
-    public getLoginAlert(): Locator {                                                                  
-        return this.loginAlert;
-    }
-
-    public getPasswordErrorMessage(): Locator {
-        return this.passwordErrorMessage;
-    }
-
-    public getUsernameErrorMessage(): Locator {
-        return this.usernameErrorMessage;
-    }
-
     public getTogglePasswordButton(): Locator {
         return this.togglePasswordButton;
     }
 
     public async clickLoginButton() {
         await this.loginButton.click();
-    }
-
-    public async clickClearButton() {
-        await this.clearButton.click();
     }
 
     public async fillUsername(username: string) {
@@ -79,8 +57,12 @@ export class LoginPage {
         await expect(this.loginButton).toBeVisible();
     }
 
-    public async togglePasswordVisibility() {                                                                                      
+    public async togglePasswordVisibility() {
         await this.togglePasswordButton.click();
+    }
+
+    public async getLoginErrorMessageText(): Promise<string> {
+        return await this.loginErrorMessage.textContent() || '';
     }
 }
     

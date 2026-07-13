@@ -34,7 +34,7 @@ test.describe('Cat Facts API', () => {
     // Verify pagination properties
     expect(responseBody.current_page).toBe(1);
     expect(responseBody.per_page).toBeGreaterThan(0);
-    expect(responseBody.from).toBe(1);   
+    expect(responseBody.from).toBe(1);
     expect(responseBody.last_page).toBeGreaterThanOrEqual(1);
     expect(responseBody.total).toBeGreaterThanOrEqual(responseBody.per_page);
   });
