@@ -24,7 +24,7 @@ test.describe('Accounts Features Tests', () => {
         }
     });
 
-    test('TC-ACC-01: Create a new account using button from Accounts page', async ({ adminAccountsPage }) => {
+    test('TC-ACC-02: Create a new account using button from Accounts page', async ({ adminAccountsPage }) => {
         const accountsPage = new AccountsPage(adminAccountsPage)
         await accountsPage.pageLoaded();
 
@@ -55,27 +55,27 @@ test.describe('Accounts Features Tests', () => {
     });
 
     test('TC-ACC-02: Edit account name and saving the changes', async ({ adminAccountsPage }) => {
-        const accountsPage = new AccountsPage(adminAccountsPage);
+        const accountsPage = new AccountsPage(adminAccountsPage)
 
         //Pick up the first row of the accounts table and click the Edit button
-        const table = accountsPage.accountsSection;
-        await expect(table).toBeVisible();
+        const table = accountsPage.accountsTable;
+        await expect(table.table).toBeVisible();
 
         const row = accountsPage.getFirstAccountRow()
         await expect(row).toBeVisible();
         await expect(accountsPage.getEditButton(row)).toBeVisible();
         await (accountsPage.getEditButton(row)).click();
 
-        const accountModal = accountsPage.newAccountModal.modal;
+        const accountModal = accountsPage.editAccountModal.modal;
         await expect(accountModal).toBeVisible();
-        const accountNameInput = accountsPage.newAccountModal.accountForm.accountNameInput;
+        const accountNameInput = accountsPage.editAccountModal.editAccountForm.accountName
         await expect(accountNameInput).toBeVisible();
         const newAccountName = 'Updated Account Name';
         await accountNameInput.fill(newAccountName);
-        await accountsPage.newAccountModal.accountForm.createButton.click();
+        await accountsPage.editAccountModal.editAccountForm.saveChangesButton.click();
 
         // Verify that the updated account name is displayed in the accounts table
-        const updatedRow = table.getByRole('row').filter({ hasText: newAccountName });
+        const updatedRow = table.table.getByRole('row').filter({ hasText: newAccountName });
         await expect(updatedRow).toBeVisible();
     });
 
@@ -95,7 +95,7 @@ test.describe('Accounts Features Tests', () => {
         await confirmBtn.click();
 
         // Verify the row is removed from the table by checking that no row contains the deleted account name
-        const rowToBeDeleted = accountsPage.accountsSection.locator('tbody tr').filter({ hasText: accountNameToDelete ?? '' });
+        const rowToBeDeleted = accountsPage.accountsTable.table.locator('tbody tr').filter({ hasText: accountNameToDelete ?? '' });
         await expect(rowToBeDeleted).toHaveCount(0);
     });
 
@@ -106,7 +106,7 @@ test.describe('Accounts Features Tests', () => {
         await accountsPage.selectFilterType('Savings');
 
         // Verify that visible rows are of type Savings
-        const rows = accountsPage.accountsSection.locator('tbody tr');
+        const rows = accountsPage.accountsTable.table.locator('tbody tr');
         await expect(rows.first()).toContainText('Savings'); // Ensure there are rows to check
         const count = await accountsPage.countAccountRows();
         for (let i = 0; i < count; i++) {
@@ -118,17 +118,17 @@ test.describe('Accounts Features Tests', () => {
         const accountsPage = new AccountsPage(adminAccountsPage);
         // Helper to parse balance text like "$2,500.00" -> number
         const parseBalance = async (rowIndex: number) => {
-            const row = accountsPage.accountsSection.locator('tbody tr').nth(rowIndex);
+            const row = accountsPage.accountsTable.table.locator('tbody tr').nth(rowIndex);
             const balanceText = await row.locator('td').nth(3).textContent();
             const numeric = parseFloat((balanceText ?? '').replace(/[^0-9.-]/g, ''));
             return Number.isFinite(numeric) ? numeric : 0;
         };
 
-        const balanceHeader = accountsPage.accountsSection.locator('thead th').filter({ hasText: 'Balance' }).first();
+        const balanceHeader = accountsPage.accountsTable.table.locator('thead th').filter({ hasText: 'Balance' }).first();
 
         // Click once -> ascending
         await balanceHeader.click();
-        const rowsAfterAsc = accountsPage.accountsSection.locator('tbody tr');
+        const rowsAfterAsc = accountsPage.accountsTable.table.locator('tbody tr');
         const ascCount = await rowsAfterAsc.count();
         const ascValues = [] as number[];
         for (let i = 0; i < ascCount; i++) ascValues.push(await parseBalance(i));
@@ -136,7 +136,7 @@ test.describe('Accounts Features Tests', () => {
 
         // Click again -> descending
         await balanceHeader.click();
-        const rowsAfterDesc = accountsPage.accountsSection.locator('tbody tr');
+        const rowsAfterDesc = accountsPage.accountsTable.table.locator('tbody tr');
         const descCount = await rowsAfterDesc.count();
         const descValues = [] as number[];
         for (let i = 0; i < descCount; i++) descValues.push(await parseBalance(i));

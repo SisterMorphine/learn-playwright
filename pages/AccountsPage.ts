@@ -2,7 +2,6 @@ import { Page, Locator, expect } from '@playwright/test';
 
 export class AccountsPage {
     readonly page: Page;
-    readonly accountsSection: Locator;
     readonly accountsPageTitle: Locator; 
     readonly newAccountModal: {
         modal: Locator;
@@ -14,6 +13,16 @@ export class AccountsPage {
             cancelButton: Locator;
             createButton: Locator;
             termsAndConditionsCheckbox: Locator; 
+        }
+    };
+    readonly editAccountModal: {
+        modal: Locator;
+        editAccountForm: {
+            form: Locator; 
+            accountName: Locator; 
+            accountType: Locator; 
+            accountBalance: Locator; 
+            saveChangesButton: Locator; 
         }
     };
     readonly deleteAccountModal: {
@@ -32,7 +41,6 @@ export class AccountsPage {
 
     constructor(page: Page) {
         this.page = page;
-        this.accountsSection = page.getByTestId('accounts-table');
         this.accountsPageTitle  = page.getByTestId('accounts-page-title'); 
         this.newAccountModal = {
             modal: page.getByTestId('add-account-dialog'), 
@@ -46,6 +54,16 @@ export class AccountsPage {
                 termsAndConditionsCheckbox: page.getByTestId('account-form-accept-terms-checkbox'), 
             }
         };
+        this.editAccountModal = { 
+            modal: page.getByTestId('edit-account-dialog'),
+            editAccountForm: {
+                form: page.getByTestId('account-form'),
+                accountName: page.getByTestId('account-form-name-input'),
+                accountType: page.getByTestId('account-form-type-select'),
+                accountBalance: page.locator('[name="account_balance_field"]'),
+                saveChangesButton: page.getByTestId('save-account-form-btn'),
+            }
+        }
         this.deleteAccountModal = {
             modal: page.getByTestId('delete-modal'),
             confirmButton: page.getByTestId('confirm-delete-button'),
@@ -64,11 +82,11 @@ export class AccountsPage {
     }
 
     getFirstAccountRow(): Locator {
-        return this.accountsSection.locator('tbody tr').first();
+        return this.accountsTable.table.locator('tbody tr').first();
     }
 
     getAccountRowByName(name: string): Locator {
-        return this.accountsSection.locator('tbody tr').filter({ hasText: name });
+        return this.accountsTable.table.locator('tbody tr').filter({ hasText: name });
     }
 
     getAccountNameFromRow(row: Locator): Promise<string | null> {
@@ -92,7 +110,7 @@ export class AccountsPage {
     }
 
     async countAccountRows(): Promise<number> {
-        return this.accountsSection.locator('tbody tr').count();
+        return this.accountsTable.table.locator('tbody tr').count();
     }  
 
     async selectFilterType(value: string) {
