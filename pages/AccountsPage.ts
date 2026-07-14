@@ -2,7 +2,7 @@ import { Page, Locator, expect } from '@playwright/test';
 
 export class AccountsPage {
     readonly page: Page;
-    readonly accountsPageTitle: Locator; 
+    readonly accountsPageTitle: Locator;
     readonly newAccountModal: {
         modal: Locator;
         accountForm: {
@@ -12,38 +12,37 @@ export class AccountsPage {
             initialBalanceInput: Locator;
             cancelButton: Locator;
             createButton: Locator;
-            termsAndConditionsCheckbox: Locator; 
+            termsAndConditionsCheckbox: Locator;
         }
     };
     readonly editAccountModal: {
         modal: Locator;
         editAccountForm: {
-            form: Locator; 
-            accountName: Locator; 
-            accountType: Locator; 
-            accountBalance: Locator; 
-            saveChangesButton: Locator; 
+            form: Locator;
+            accountName: Locator;
+            accountType: Locator;
+            accountBalance: Locator;
+            saveChangesButton: Locator;
         }
     };
     readonly deleteAccountModal: {
         modal: Locator;
         confirmButton: Locator;
-        cancelButton: Locator;
     };
     readonly filterTypeSelect: Locator;
     readonly accountsTable: {
         table: Locator;
         accountRow: Locator;
     };
-    readonly addAccountButton: Locator; 
+    readonly addAccountButton: Locator;
 
 
 
     constructor(page: Page) {
         this.page = page;
-        this.accountsPageTitle  = page.getByTestId('accounts-page-title'); 
+        this.accountsPageTitle = page.getByTestId('accounts-page-title');
         this.newAccountModal = {
-            modal: page.getByTestId('add-account-dialog'), 
+            modal: page.getByTestId('add-account-dialog'),
             accountForm: {
                 accountForm: page.getByTestId('account-form'),
                 accountNameInput: page.getByTestId('account-form-name-input'),
@@ -51,10 +50,10 @@ export class AccountsPage {
                 initialBalanceInput: page.locator('[name="account_balance_field"]'),
                 cancelButton: page.getByTestId('cancel-button'),
                 createButton: page.getByTestId('save-account-form-btn'),
-                termsAndConditionsCheckbox: page.getByTestId('account-form-accept-terms-checkbox'), 
+                termsAndConditionsCheckbox: page.getByTestId('account-form-accept-terms-checkbox'),
             }
         };
-        this.editAccountModal = { 
+        this.editAccountModal = {
             modal: page.getByTestId('edit-account-dialog'),
             editAccountForm: {
                 form: page.getByTestId('account-form'),
@@ -66,15 +65,14 @@ export class AccountsPage {
         }
         this.deleteAccountModal = {
             modal: page.getByTestId('delete-modal'),
-            confirmButton: page.getByTestId('confirm-delete-button'),
-            cancelButton: page.getByTestId('cancel-delete-button'),
+            confirmButton: page.getByTestId('confirm-delete-account-btn'),
         };
         this.filterTypeSelect = page.getByTestId('filter-type-select');
         this.accountsTable = {
             table: page.getByTestId('accounts-table'),
             accountRow: page.getByTestId('account-row'),
         }
-        this.addAccountButton = page.getByTestId('add-account-btn'); 
+        this.addAccountButton = page.getByTestId('add-account-btn');
     }
     async pageLoaded() {
         await expect(this.page).toHaveURL(/bank\/accounts/);
@@ -90,9 +88,9 @@ export class AccountsPage {
     }
 
     getAccountNameFromRow(row: Locator): Promise<string | null> {
-        return row.getByTestId('account-name').textContent();
+        return row.getByTestId('account-row-name').textContent();
     }
- 
+
     getEditButton(row: Locator): Locator {
         return row.getByRole('button', { name: 'Edit' });
     }
@@ -111,12 +109,12 @@ export class AccountsPage {
 
     async countAccountRows(): Promise<number> {
         return this.accountsTable.table.locator('tbody tr').count();
-    }  
+    }
 
     async selectFilterType(value: string) {
-    await this.page.getByTestId('filter-type-select').click();
-    await this.page.getByRole('option', { name: value }).click();
-}
+        await this.page.getByTestId('filter-type-select').click();
+        await this.page.getByRole('option', { name: value }).click();
+    }
 
 
 }

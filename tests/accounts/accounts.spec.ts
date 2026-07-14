@@ -80,8 +80,15 @@ test.describe('Accounts Features Tests', () => {
     });
 
     test('TC-ACC-03: Delete an account with confirmation and verify it is removed', async ({ adminAccountsPage }) => {
-        const accountsPage = new AccountsPage(adminAccountsPage);
+         const accountsPage = new AccountsPage(adminAccountsPage)
+
+        //Pick up the first row of the accounts table and click the Edit button
+        const table = accountsPage.accountsTable;
+        await expect(table.table).toBeVisible();
+
         const targetRow = accountsPage.getFirstAccountRow()
+        await expect(targetRow).toBeVisible();
+
         //save in a variable the account name of the row to be deleted
         const accountNameToDelete = await accountsPage.getAccountNameFromRow(targetRow);
         await expect(targetRow).toBeVisible();
