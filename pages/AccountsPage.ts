@@ -29,7 +29,6 @@ export class AccountsPage {
         modal: Locator;
         confirmButton: Locator;
     };
-    readonly filterTypeSelect: Locator;
     readonly accountsTable: {
         table: Locator;
         accountRow: Locator;
@@ -67,7 +66,6 @@ export class AccountsPage {
             modal: page.getByTestId('delete-modal'),
             confirmButton: page.getByTestId('confirm-delete-account-btn'),
         };
-        this.filterTypeSelect = page.getByTestId('filter-type-select');
         this.accountsTable = {
             table: page.getByTestId('accounts-table'),
             accountRow: page.getByTestId('account-row'),
@@ -109,11 +107,6 @@ export class AccountsPage {
 
     async countAccountRows(): Promise<number> {
         return this.accountsTable.table.locator('tbody tr').count();
-    }
-
-    async selectFilterType(value: string) {
-        await this.page.getByTestId('filter-type-select').click();
-        await this.page.getByRole('option', { name: value }).click();
     }
 
 
