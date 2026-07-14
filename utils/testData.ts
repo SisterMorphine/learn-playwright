@@ -1,7 +1,7 @@
-export const TEST_URLS = {
-  login: 'https://qaplayground.com/bank/login',
-  dashboard: 'https://qaplayground.com/bank/dashboard'
-};
+// export const TEST_URLS = {
+//   login: 'https://qaplayground.com/bank/login',
+//   dashboard: 'https://qaplayground.com/bank/dashboard'
+// };
 
 export const AUTH_FILES = {
   admin: 'playwright/.auth/admin.json',

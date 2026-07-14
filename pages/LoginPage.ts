@@ -20,14 +20,14 @@ export class LoginPage {
     public async goto() {
         await this.page.goto('/bank/login');
     }
-    
+
     public getUsernameInput(): Locator {
         return this.usernameInput;
     }
-    
+
     public getPasswordInput(): Locator {
         return this.passwordInput;
-    }       
+    }
 
     public getTogglePasswordButton(): Locator {
         return this.togglePasswordButton;
@@ -65,4 +65,3 @@ export class LoginPage {
         return await this.loginErrorMessage.textContent() || '';
     }
 }
-    

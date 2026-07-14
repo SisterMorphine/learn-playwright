@@ -3,6 +3,7 @@ import { Page, Locator, expect } from '@playwright/test';
 export class AccountsPage {
     readonly page: Page;
     readonly accountsSection: Locator;
+    readonly accountsPageTitle: Locator; 
     readonly newAccountModal: {
         modal: Locator;
         accountForm: {
@@ -12,6 +13,7 @@ export class AccountsPage {
             initialBalanceInput: Locator;
             cancelButton: Locator;
             createButton: Locator;
+            termsAndConditionsCheckbox: Locator; 
         }
     };
     readonly deleteAccountModal: {
@@ -20,21 +22,28 @@ export class AccountsPage {
         cancelButton: Locator;
     };
     readonly filterTypeSelect: Locator;
+    readonly accountsTable: {
+        table: Locator;
+        accountRow: Locator;
+    };
+    readonly addAccountButton: Locator; 
 
 
 
     constructor(page: Page) {
         this.page = page;
         this.accountsSection = page.getByTestId('accounts-table');
+        this.accountsPageTitle  = page.getByTestId('accounts-page-title'); 
         this.newAccountModal = {
-            modal: page.getByTestId('account-modal'),
+            modal: page.getByTestId('add-account-dialog'), 
             accountForm: {
                 accountForm: page.getByTestId('account-form'),
-                accountNameInput: page.getByTestId('account-name-input'),
-                accountTypeSelect: page.getByTestId('account-type-select'),
-                initialBalanceInput: page.getByTestId('initial-balance-input'),
+                accountNameInput: page.getByTestId('account-form-name-input'),
+                accountTypeSelect: page.getByTestId('account-form-type-select'),
+                initialBalanceInput: page.locator('[name="account_balance_field"]'),
                 cancelButton: page.getByTestId('cancel-button'),
-                createButton: page.getByTestId('save-account-button'),
+                createButton: page.getByTestId('save-account-form-btn'),
+                termsAndConditionsCheckbox: page.getByTestId('account-form-accept-terms-checkbox'), 
             }
         };
         this.deleteAccountModal = {
@@ -43,10 +52,15 @@ export class AccountsPage {
             cancelButton: page.getByTestId('cancel-delete-button'),
         };
         this.filterTypeSelect = page.getByTestId('filter-type-select');
+        this.accountsTable = {
+            table: page.getByTestId('accounts-table'),
+            accountRow: page.getByTestId('account-row'),
+        }
+        this.addAccountButton = page.getByTestId('add-account-btn'); 
     }
     async pageLoaded() {
         await expect(this.page).toHaveURL(/bank\/accounts/);
-        await expect(this.accountsSection).toBeVisible;
+        await expect(this.accountsPageTitle).toBeVisible();
     }
 
     getFirstAccountRow(): Locator {
@@ -67,6 +81,14 @@ export class AccountsPage {
 
     getDeleteButton(row: Locator): Locator {
         return row.getByRole('button', { name: 'Delete' });
+    }
+
+    getSeeButton(row: Locator): Locator {
+        return row.getByTestId('view-account-btn');
+    }
+
+    getBalanceCell(row: Locator): Locator {
+        return row.getByTestId('account-row-balance');
     }
 
     async countAccountRows(): Promise<number> {

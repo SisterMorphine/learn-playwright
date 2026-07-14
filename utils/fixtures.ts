@@ -1,6 +1,7 @@
 import { test as base, Page } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
+import { TEST_USERS } from './testData';
 
 export type TestFixtures = {
   adminPage: Page;
@@ -14,7 +15,7 @@ export const test = base.extend<TestFixtures>({
   adminPage: async ({ page }, use) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.login('admin', 'admin123');
+    await loginPage.login(TEST_USERS.admin.username, TEST_USERS.admin.password);
     await new DashboardPage(page).pageLoaded();
     await use(page);
   },

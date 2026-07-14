@@ -7,6 +7,7 @@ export class DashboardPage {
     readonly recentTransactionsTable: Locator;
     readonly recentTransactionsTableBody: Locator;
     readonly totalBalanceCard: Locator;
+    readonly newTotalBalanceCard: Locator;
     readonly activeAccountsCard: Locator;
     readonly accountsCount: Locator;
     readonly totalTransactionsCard: Locator;
@@ -16,6 +17,7 @@ export class DashboardPage {
         newTransaction: Locator;
         viewAllAccounts: Locator;
     };
+    readonly dashboardWelcomeMessage: Locator; 
 
     constructor(page: Page) {
         this.page = page;
@@ -24,7 +26,7 @@ export class DashboardPage {
         this.recentTransactionsTable = page.getByTestId('recent-transactions-table');
         this.recentTransactionsTableBody = this.recentTransactionsTable.locator('tbody');
         this.totalBalanceCard = page.getByTestId('total-balance');
-
+        this.newTotalBalanceCard = page.getByTestId('stat-card-net-worth-value');
         this.activeAccountsCard = page.getByTestId('accounts-count-card');
         this.accountsCount = page.getByTestId('accounts-count');
         this.totalTransactionsCard = page.getByTestId('transactions-count-card');
@@ -34,6 +36,7 @@ export class DashboardPage {
             newTransaction: page.getByTestId('quick-new-transaction'),
             viewAllAccounts: page.getByTestId('quick-view-accounts'),
         };
+        this.dashboardWelcomeMessage = page.getByTestId('dashboard-welcome-message'); 
     }
 
     async pageLoaded() {
