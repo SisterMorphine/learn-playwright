@@ -29,12 +29,11 @@ export class TransactionsPage {
     private readonly dateFromInput: Locator;
     private readonly dateToInput: Locator;
     private readonly calendar: Locator;
-    private readonly applyFiltersButton: Locator;
     private readonly resetFiltersButton: Locator;
     private readonly exportButton: Locator;
     private readonly summaryBar: Locator;
     private readonly transactionsTable: Locator;
-    private readonly transactionsTbody: Locator;
+    //private readonly transactionsTbody: Locator;
     private readonly newTransactionModal: NewTransactionModal;
     private readonly backButton: Locator;
     private readonly transactionDetail: TransactionDetails;
@@ -42,17 +41,15 @@ export class TransactionsPage {
 
     constructor(page: Page) {
         this.page = page;
-        this.filterAccountSelect = page.getByTestId('filter-account-select');
+        this.filterAccountSelect = page.getByTestId('all-txn-account-select');
         this.filterTypeSelect = page.getByTestId('filter-transaction-type-select');
         this.dateFromInput = page.getByTestId('date-from-input');
         this.dateToInput = page.getByTestId('date-to-input');
         this.calendar = page.locator('[data-testid="date-picker-calendar"][data-state="open"]')
-        this.applyFiltersButton = page.getByTestId('apply-filters-button');
-        this.resetFiltersButton = page.getByTestId('reset-filters-button');
-        this.exportButton = page.getByTestId('export-button');
+        this.resetFiltersButton = page.getByTestId('clear-all-txn-filters-btn');
+        this.exportButton = page.getByTestId('download-all-transactions-btn');
         this.summaryBar = page.getByTestId('transactions-summary-bar');
-        this.transactionsTable = page.getByTestId('transactions-table');
-        this.transactionsTbody = page.getByTestId('transactions-tbody');
+        this.transactionsTable = page.getByRole('table', { name: 'All account transactions' });
         this.newTransactionModal = {
             modal: page.getByTestId('transaction-modal'),
             transactionTypeSelect: page.getByTestId('transaction-type-select'),
@@ -100,6 +97,9 @@ export class TransactionsPage {
         return this.newTransactionModal;
     }
 
+    public get getTransactionsTable(): Locator{ 
+        return this.transactionsTable; 
+    }
     public getSummaryTransactionsCount(): Locator {
         return this.summmaryTransactionsCount;
     }
@@ -123,7 +123,28 @@ export class TransactionsPage {
     }
 
     public getTransactionRows(): Locator {
-        return this.transactionsTbody.getByTestId('transaction-row');
+        return this.transactionsTable.getByTestId('all-txn-row');
+    }
+
+    public getTransactionDate(row: Locator): Locator {
+        return row.getByTestId('all-txn-date');
+    }
+
+    // Account cell has no data-testid — fall back to column position (Date, Account, Description, Category, Amount).
+    public getTransactionAccount(row: Locator): Locator {
+        return row.getByRole('cell').nth(1);
+    }
+
+    public getTransactionDescription(row: Locator): Locator {
+        return row.getByTestId('all-txn-description');
+    }
+
+    public getTransactionCategory(row: Locator): Locator {
+        return row.getByTestId('all-txn-category-badge');
+    }
+
+    public getTransactionAmount(row: Locator): Locator {
+        return row.getByTestId('all-txn-amount');
     }
 
     public getCalendar(): Locator {
@@ -140,10 +161,6 @@ export class TransactionsPage {
 
     public async clickOnResetFiltersButton() {
         await this.resetFiltersButton.click();
-    }
-
-    public async clickOnApplyFilterButton() {
-        await this.applyFiltersButton.click();
     }
 
     public async clickOnDownloadButton() {
