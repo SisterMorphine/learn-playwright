@@ -33,58 +33,93 @@ test.describe('Transactions Features Tests', () => {
     });
 
 
-    // test('TC-TXN-01: Create a deposit transaction and verify balance update', async ({ adminAccountsPage }) => {
-    //     //Go to Accounts page and get the first account, save the name and the balance
-    //     const accountsPage = new AccountsPage(adminAccountsPage);
-    //     await accountsPage.pageLoaded();
+    test('TC-TXN-02: Verify Account Filter', async ({ adminTransactionsPage }) => {
+        //Navigate to Transactions page
+        const transactionsPage = new TransactionsPage(adminTransactionsPage);
+        await transactionsPage.pageLoaded();
 
-    //     await adminAccountsPage.locator('td').filter({ hasText: /\$/ }).first().waitFor();
-    //     const primarySavingsRow = accountsPage.getFirstAccountRow();
+        //Select a specific 'Checking' account from the filter dropdown
+        const transactionsTable = transactionsPage.getTransactionsTable;
+        await expect(transactionsTable).toBeVisible();
 
-    //     await expect(primarySavingsRow).toBeVisible();
-    //     const balanceBefore = parseFloat(
-    //         (await primarySavingsRow.locator('td').nth(3).textContent() ?? '').replace(/[^0-9.]/g, '')
-    //     );
-    //     const accountName = await accountsPage.getAccountNameFromRow(primarySavingsRow);
+        const totalBefore = await transactionsPage.getTransactionRows().count();
+        await transactionsPage.selectFilterAccount('Everyday Checking');
 
-    //     const transactionsPage = new TransactionsPage(adminAccountsPage);
-    //     if (!accountName) throw new Error('Failed to read account name');
+        //Assert all visible transactions belong to the selected account
+        const rows = transactionsPage.getTransactionRows();
+        await expect(rows.first()).toBeVisible();
+        const count = await rows.count();
+        for (let i = 0; i < count; i++) {
+            await expect(transactionsPage.getTransactionAccount(rows.nth(i))).toHaveText('Everyday Checking');
+        }
 
-    //     await transactionsPage.createTransaction('Deposit', accountName, '500');
+        await transactionsPage.clickOnResetFiltersButton();
+        const countAfter = await transactionsPage.getTransactionRows().count();
+        expect(countAfter).toBeGreaterThanOrEqual(totalBefore);
 
-    //     const transactionModal = transactionsPage.getNewTransactionModal();
-    //     await expect(transactionModal.modal).toBeHidden();
 
-    //     await expect(adminAccountsPage.getByText(/success/i).first()).toBeVisible();
-    //     await expect(transactionsPage.getTransactionRows().first()).toBeVisible();
+    });
 
-    //     await adminAccountsPage.goto('/bank/accounts');
-    //     await adminAccountsPage.locator('td').filter({ hasText: /\$/ }).first().waitFor();
-    //     const balanceAfter = parseFloat(
-    //         (await accountsPage.getAccountRowByName(accountName).locator('td').nth(3).textContent() ?? '').replace(/[^0-9.]/g, '')
-    //     );
-    //     expect(balanceAfter).toBeCloseTo(balanceBefore + 500, 2);
-    // });
+    test('TC-TXN-03: Verify Search Functionality', async ({ adminTransactionsPage }) => {
+        //Navigate to Transactions page
+        const transactionsPage = new TransactionsPage(adminTransactionsPage);
+        await transactionsPage.pageLoaded();
 
-    // test('TC-TXN-02: Filter transactions by account and verify only matching rows appear', async ({ adminTransactionsPage }) => {
-    //     const transactionsPage = new TransactionsPage(adminTransactionsPage);
-    //     await transactionsPage.pageLoaded();
+        //Enter 'Transfer' in the search bar
+        const transactionsTable = transactionsPage.getTransactionsTable;
+        await expect(transactionsTable).toBeVisible();
 
-    //     const totalBefore = await transactionsPage.getTransactionRows().count();
+        //Assert all visible transactions contain 'Transfer' in their description or category
 
-    //     await transactionsPage.selectFilterAccount('Everyday Checking');
 
-    //     const rows = transactionsPage.getTransactionRows();
-    //     await expect(rows.first()).toBeVisible();
-    //     const count = await rows.count();
-    //     for (let i = 0; i < count; i++) {
-    //         await expect(transactionsPage.getTransactionAccount(rows.nth(i))).toHaveText('Everyday Checking');
-    //     }
 
-    //     await transactionsPage.clickOnResetFiltersButton();
-    //     const countAfter = await transactionsPage.getTransactionRows().count();
-    //     expect(countAfter).toBeGreaterThanOrEqual(totalBefore);
-    // });
+    });
+
+    test('TC-TXN-04: Verify Date Sorting', async ({ adminTransactionsPage }) => {
+        //Navigate to Transactions page
+        const transactionsPage = new TransactionsPage(adminTransactionsPage);
+        await transactionsPage.pageLoaded();
+
+        //Click the Date column header
+        const transactionsTable = transactionsPage.getTransactionsTable;
+        await expect(transactionsTable).toBeVisible();
+
+        //Assert transactions are sorted by date ascending
+
+        //Click the Date column header again
+
+        //Assert transactions are sorted by date descending
+
+
+    });
+
+
+    test('TC-TXN-05: Verify Pagination', async ({ adminTransactionsPage }) => {
+        //Navigate to Transactions page
+        const transactionsPage = new TransactionsPage(adminTransactionsPage);
+        await transactionsPage.pageLoaded();
+
+        //Assert pagination 'Next' button is enabled if multiple pages exist
+
+        //Click 'Next'
+
+        //Assert the second page of transactions is displayed
+
+
+
+    });
+
+    test('TC-TXN-06:Verify Empty State - No transactions message is shown when filters return no results', async ({ adminTransactionsPage }) => {
+        //Navigate to Transactions page
+        const transactionsPage = new TransactionsPage(adminTransactionsPage);
+        await transactionsPage.pageLoaded();
+
+        //Search for a non-existent string like 'XYZ123NonExistent'
+
+        //Assert 'No transactions found' message is displayed
+
+
+    });
 
     // test('TC-TXN-03: Filter transactions by date range using calendar date picker', async ({ adminTransactionsPage }) => {
     //     const transactionsPage = new TransactionsPage(adminTransactionsPage);
