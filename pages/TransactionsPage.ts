@@ -26,18 +26,9 @@ export class TransactionsPage {
     private readonly page: Page;
     private readonly filterAccountSelect: Locator;
     private readonly filterTypeSelect: Locator;
-    private readonly dateFromInput: Locator;
-    private readonly dateToInput: Locator;
-    private readonly calendar: Locator;
     private readonly resetFiltersButton: Locator;
-    private readonly exportButton: Locator;
-    private readonly summaryBar: Locator;
     private readonly transactionsTable: Locator;
-    //private readonly transactionsTbody: Locator;
-    private readonly newTransactionModal: NewTransactionModal;
-    private readonly backButton: Locator;
     private readonly transactionDetail: TransactionDetails;
-    private readonly summmaryTransactionsCount: Locator;
     private readonly searchInput: Locator; 
     private readonly emptyResultsMessage: Locator; 
 
@@ -45,23 +36,8 @@ export class TransactionsPage {
         this.page = page;
         this.filterAccountSelect = page.getByTestId('all-txn-account-select');
         this.filterTypeSelect = page.getByTestId('filter-transaction-type-select');
-        this.dateFromInput = page.getByTestId('date-from-input');
-        this.dateToInput = page.getByTestId('date-to-input');
-        this.calendar = page.locator('[data-testid="date-picker-calendar"][data-state="open"]')
         this.resetFiltersButton = page.getByTestId('clear-all-txn-filters-btn');
-        this.exportButton = page.getByTestId('download-all-transactions-btn');
-        this.summaryBar = page.getByTestId('transactions-summary-bar');
         this.transactionsTable = page.getByRole('table', { name: 'All account transactions' });
-        this.newTransactionModal = {
-            modal: page.getByTestId('transaction-modal'),
-            transactionTypeSelect: page.getByTestId('transaction-type-select'),
-            fromAccountSelect: page.getByTestId('from-account-select'),
-            amountInput: page.getByTestId('transaction-amount-input'),
-            descriptionInput: page.getByTestId('transaction-description-input'),
-            submitButton: page.getByTestId('submit-transaction-button'),
-            cancelButton: page.getByTestId('cancel-transaction-button'),
-        };
-        this.backButton = page.getByTestId('back-button');
         this.transactionDetail = {
             card: page.getByTestId('transaction-detail-card'),
             type: page.getByTestId('transaction-detail-type'),
@@ -73,7 +49,6 @@ export class TransactionsPage {
             balanceAfter: page.getByTestId('transaction-detail-balance-after'),
             description: page.getByTestId('transaction-detail-description'),
         };
-        this.summmaryTransactionsCount = this.summaryBar.locator('#summary-count');
         this.searchInput = page.getByTestId('all-txn-search-input'); 
         this.emptyResultsMessage = page.getByTestId('no-all-transactions-message'); 
     }
@@ -95,27 +70,8 @@ export class TransactionsPage {
         await searchInput.fill(searchCriteria); 
     }
 
-    public getNewTransactionModal(): NewTransactionModal {
-        const transactionModal = this.newTransactionModal;
-        transactionModal.modal = this.newTransactionModal.modal;
-        transactionModal.transactionTypeSelect = this.newTransactionModal.transactionTypeSelect
-        transactionModal.fromAccountSelect = this.newTransactionModal.fromAccountSelect
-        transactionModal.amountInput = this.newTransactionModal.amountInput
-        transactionModal.descriptionInput = this.newTransactionModal.descriptionInput
-        transactionModal.submitButton = this.newTransactionModal.submitButton
-        transactionModal.cancelButton = this.newTransactionModal.cancelButton
-        return this.newTransactionModal;
-    }
-
     public get getTransactionsTable(): Locator{ 
         return this.transactionsTable; 
-    }
-    public getSummaryTransactionsCount(): Locator {
-        return this.summmaryTransactionsCount;
-    }
-
-    public getSummaryBar(): Locator {
-        return this.summaryBar;
     }
 
     public getTransactionDetailCard(): TransactionDetails {
@@ -157,32 +113,12 @@ export class TransactionsPage {
         return row.getByTestId('all-txn-amount');
     }
 
-    public getCalendar(): Locator {
-        return this.calendar;
-    }
-
-    public getInputDateFrom(): Locator {
-        return this.dateFromInput;
-    }
-
-    public getInputDateTo(): Locator {
-        return this.dateToInput;
-    }
-
     public getEmptySearchResultsMessage(): Locator {
         return this.emptyResultsMessage; 
     }
 
     public async clickOnResetFiltersButton() {
         await this.resetFiltersButton.click();
-    }
-
-    public async clickOnDownloadButton() {
-        await this.exportButton.click();
-    }
-
-    public async clickOnBackButton() {
-        await this.backButton.click();
     }
 
     public async selectFilterAccount(value: string) {
@@ -193,17 +129,5 @@ export class TransactionsPage {
     public async selectFilterType(value: string) {
         await this.filterTypeSelect.click();
         await this.page.getByRole('option', { name: value }).click();
-    }
-
-    public async createTransaction(type: string, account: string, amount: string) {
-        await this.page.goto('/bank/transactions?action=new');
-        await expect(this.newTransactionModal.modal).toBeVisible();
-        await this.newTransactionModal.transactionTypeSelect.click();
-        await this.page.getByRole('option', { name: type }).click();
-        await this.newTransactionModal.fromAccountSelect.click();
-        await this.page.getByRole('option', { name: account }).click();
-        await this.newTransactionModal.amountInput.fill(amount);
-        await this.newTransactionModal.submitButton.click();
-        await expect(this.newTransactionModal.modal).not.toBeVisible();
     }
 }
