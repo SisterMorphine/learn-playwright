@@ -38,10 +38,10 @@ test.describe('Transactions Features Tests', () => {
         const transactionsPage = new TransactionsPage(adminTransactionsPage);
         await transactionsPage.pageLoaded();
 
-        //Select a specific 'Checking' account from the filter dropdown
         const transactionsTable = transactionsPage.getTransactionsTable;
         await expect(transactionsTable).toBeVisible();
 
+        //Select a specific 'Checking' account from the filter dropdown
         const totalBefore = await transactionsPage.getTransactionRows().count();
         await transactionsPage.selectFilterAccount('Everyday Checking');
 
@@ -57,7 +57,6 @@ test.describe('Transactions Features Tests', () => {
         const countAfter = await transactionsPage.getTransactionRows().count();
         expect(countAfter).toBeGreaterThanOrEqual(totalBefore);
 
-
     });
 
     test('TC-TXN-03: Verify Search Functionality', async ({ adminTransactionsPage }) => {
@@ -68,10 +67,21 @@ test.describe('Transactions Features Tests', () => {
         //Enter 'Transfer' in the search bar
         const transactionsTable = transactionsPage.getTransactionsTable;
         await expect(transactionsTable).toBeVisible();
+        await transactionsPage.search('Transfer'); 
 
-        //Assert all visible transactions contain 'Transfer' in their description or category
+        // Assert all visible transactions contain 'Transfer' in their description or category
+        const visibleRows = transactionsPage.getTransactionRows();
+        const visibleCount = await visibleRows.count();
+        expect(visibleCount).toBeGreaterThan(0);
 
-
+        for (let i = 0; i < visibleCount; i++) {
+            const row = visibleRows.nth(i);
+            const descriptionText = (await transactionsPage.getTransactionDescription(row).textContent())?.trim() ?? '';
+            const categoryText = (await transactionsPage.getTransactionCategory(row).textContent())?.trim() ?? '';
+            expect(
+                descriptionText.toLowerCase().includes('transfer')||categoryText.toLowerCase().includes('transfer')
+            ).toBe(true);
+        }
 
     });
 
@@ -83,13 +93,39 @@ test.describe('Transactions Features Tests', () => {
         //Click the Date column header
         const transactionsTable = transactionsPage.getTransactionsTable;
         await expect(transactionsTable).toBeVisible();
+        const dateHeader = transactionsTable.getByRole('columnheader').filter({ hasText: 'Date' });
+        await dateHeader.click();
 
         //Assert transactions are sorted by date ascending
+        let rows = transactionsPage.getTransactionRows();
+        const ascendingDates: Date[] = [];
+        const ascendingCount = await rows.count();
+        for (let i = 0; i < ascendingCount; i++) {
+            const dateText = await transactionsPage.getTransactionDate(rows.nth(i)).textContent();
+            if (dateText) {
+                ascendingDates.push(new Date(dateText.trim()));
+            }
+        }
+        for (let i = 0; i < ascendingDates.length - 1; i++) {
+            expect(ascendingDates[i].getTime()).toBeLessThanOrEqual(ascendingDates[i + 1].getTime());
+        }
 
         //Click the Date column header again
+        await dateHeader.click();
 
         //Assert transactions are sorted by date descending
-
+        rows = transactionsPage.getTransactionRows();
+        const descendingDates: Date[] = [];
+        const descendingCount = await rows.count();
+        for (let i = 0; i < descendingCount; i++) {
+            const dateText = await transactionsPage.getTransactionDate(rows.nth(i)).textContent();
+            if (dateText) {
+                descendingDates.push(new Date(dateText.trim()));
+            }
+        }
+        for (let i = 0; i < descendingDates.length - 1; i++) {
+            expect(descendingDates[i].getTime()).toBeGreaterThanOrEqual(descendingDates[i + 1].getTime());
+        }
 
     });
 
@@ -99,13 +135,32 @@ test.describe('Transactions Features Tests', () => {
         const transactionsPage = new TransactionsPage(adminTransactionsPage);
         await transactionsPage.pageLoaded();
 
-        //Assert pagination 'Next' button is enabled if multiple pages exist
+        // Assert pagination 'Next' button is enabled if multiple pages exist
+        const nextButton = adminTransactionsPage.getByRole('button', { name: /next/i });
+        const isNextButtonVisible = await nextButton.isVisible().catch(() => false);
+        
+        if (isNextButtonVisible) {
+            const isNextEnabled = await nextButton.isEnabled();
+            
+            if (isNextEnabled) {
+                // Store the first page row count and first row data
+                const firstPageRows = transactionsPage.getTransactionRows();
+                const firstPageCount = await firstPageRows.count();
+                const firstPageFirstRowText = await firstPageRows.first().textContent();
 
-        //Click 'Next'
+                // Click 'Next'
+                await nextButton.click();
+                await adminTransactionsPage.waitForLoadState('networkidle');
 
-        //Assert the second page of transactions is displayed
-
-
+                // Assert the second page of transactions is displayed
+                const secondPageRows = transactionsPage.getTransactionRows();
+                const secondPageCount = await secondPageRows.count();
+                expect(secondPageCount).toBeGreaterThan(0);
+                
+                const secondPageFirstRowText = await secondPageRows.first().textContent();
+                expect(secondPageFirstRowText).not.toBe(firstPageFirstRowText);
+            }
+        }
 
     });
 
@@ -115,94 +170,14 @@ test.describe('Transactions Features Tests', () => {
         await transactionsPage.pageLoaded();
 
         //Search for a non-existent string like 'XYZ123NonExistent'
+        const transactionsTable = transactionsPage.getTransactionsTable;
+        await expect(transactionsTable).toBeVisible();
+        await transactionsPage.search('XYZ123NonExistent'); 
 
         //Assert 'No transactions found' message is displayed
-
+        const emptyMessage = transactionsPage.getEmptySearchResultsMessage();
+        await expect(emptyMessage).toBeVisible();
 
     });
-
-    // test('TC-TXN-03: Filter transactions by date range using calendar date picker', async ({ adminTransactionsPage }) => {
-    //     const transactionsPage = new TransactionsPage(adminTransactionsPage);
-    //     await transactionsPage.pageLoaded();
-
-    //     const totalBefore = await transactionsPage.getTransactionRows().count();
-
-    //     // FROM: 1st of current month
-    //     const dateFromInput = transactionsPage.getInputDateFrom();
-    //     await dateFromInput.click();
-    //     const calendar = transactionsPage.getCalendar();
-    //     await expect(calendar).toBeVisible();
-    //     await calendar.locator('button').filter({ hasText: /^1$/ }).first().click();
-    //     await expect(dateFromInput).not.toContainText('Pick start date');
-
-    //     // TO: today
-    //     const dateToInput = transactionsPage.getInputDateTo();
-    //     await dateToInput.click();
-    //     await expect(calendar).toBeVisible();
-    //     await calendar.getByRole('button', { name: /Today/ }).click();
-    //     await expect(dateToInput).not.toContainText('Pick a date');
-
-    //     await transactionsPage.clickOnResetFiltersButton();
-    //     await expect(transactionsPage.getTransactionRows()).toHaveCount(totalBefore);
-    // });
-
-    // test('TC-TXN-04: Export transactions as CSV and verify file is downloaded', async ({ adminTransactionsPage }) => {
-    //     const transactionsPage = new TransactionsPage(adminTransactionsPage);
-    //     await transactionsPage.pageLoaded();
-    //     await expect(transactionsPage.getTransactionRows().first()).toBeVisible();
-
-    //     const [download] = await Promise.all([
-    //         adminTransactionsPage.waitForEvent('download'),
-    //         transactionsPage.clickOnDownloadButton()
-    //     ]);
-    //     expect(download.suggestedFilename()).toMatch(/\.csv$/);
-    // });
-
-    // test('TC-TXN-05: Transaction detail page shows all fields and breadcrumb navigation', async ({ adminTransactionsPage }) => {
-    //     const transactionsPage = new TransactionsPage(adminTransactionsPage);
-    //     await transactionsPage.pageLoaded();
-
-    //     const firstRow = transactionsPage.getTransactionRows().first();
-    //     await expect(firstRow).toBeVisible();
-    //     const txnId = await firstRow.getByTestId('transaction-id').textContent();
-
-    //     await firstRow.getByTestId('transaction-id-link').click();
-    //     await expect(adminTransactionsPage).toHaveURL(/bank\/transactions\/.+/);
-
-    //     await expect(adminTransactionsPage.getByTestId('breadcrumb-item-1')).toContainText('Dashboard');
-    //     await expect(adminTransactionsPage.getByTestId('breadcrumb-item-2')).toContainText('Transactions');
-    //     await expect(adminTransactionsPage.getByTestId('breadcrumb-item-3')).toContainText(txnId ?? '');
-
-    //     const transactionsDetail = transactionsPage.getTransactionDetailCard();
-    //     await expect(transactionsDetail.card).toBeVisible();
-    //     await expect(transactionsDetail.type).toContainText(/Deposit|Withdrawal|Transfer/);
-    //     await expect(transactionsDetail.amount).toContainText(/\$[\d,]+\.\d{2}/);
-    //     await expect(transactionsDetail.datetime).toContainText(/^[A-Z][a-z]{2} \d{1,2}, \d{4}(,| at) \d{2}:\d{2} (AM|PM)$/);
-    //     await expect(transactionsDetail.balanceAfter).toContainText(/\$[\d,]+\.\d{2}/);
-    //     await expect(transactionsDetail.accountLink).toContainText(/\w+(\s+\w+)*/);
-    //     await expect(transactionsDetail.description).toContainText(/.+/);
-    //     await expect(transactionsDetail.status).toContainText(/Completed|Pending|Failed/);
-    //     await transactionsPage.clickOnBackButton();
-    //     await expect(adminTransactionsPage).toHaveURL(/bank\/transactions$/);
-    // });
-
-    // test('TC-TXN-06: Verify that the summary displays the correct number of transactions', async ({ adminTransactionsPage }) => {
-    //     const transactionsPage = new TransactionsPage(adminTransactionsPage);
-    //     await transactionsPage.pageLoaded();
-
-    //     const summaryCount = transactionsPage.getSummaryTransactionsCount()
-    //     await expect(summaryCount).toBeVisible();
-    //     await expect(summaryCount).toContainText(/\d+ transactions?/);
-
-    //     const summaryCountText = await summaryCount.textContent();
-    //     const summaryCountValue = parseInt(summaryCountText ?? '0', 10);
-
-    //     const table = transactionsPage.getTransactionRows();
-    //     await expect(table).toBeVisible();
-    //     const totalRows = await transactionsPage.getTransactionRows().count();
-
-    //     expect(totalRows).toBeCloseTo(summaryCountValue);
-
-    // });
 
 });

@@ -38,6 +38,8 @@ export class TransactionsPage {
     private readonly backButton: Locator;
     private readonly transactionDetail: TransactionDetails;
     private readonly summmaryTransactionsCount: Locator;
+    private readonly searchInput: Locator; 
+    private readonly emptyResultsMessage: Locator; 
 
     constructor(page: Page) {
         this.page = page;
@@ -72,6 +74,8 @@ export class TransactionsPage {
             description: page.getByTestId('transaction-detail-description'),
         };
         this.summmaryTransactionsCount = this.summaryBar.locator('#summary-count');
+        this.searchInput = page.getByTestId('all-txn-search-input'); 
+        this.emptyResultsMessage = page.getByTestId('no-all-transactions-message'); 
     }
 
     public async pageLoaded() {
@@ -83,6 +87,12 @@ export class TransactionsPage {
         const filtersButton = this.page.getByTestId('filters-button');
         await expect(filtersButton).toBeVisible();
         await filtersButton.click();
+    }
+
+    public async search(searchCriteria: string) {
+        const searchInput = this.searchInput
+        await expect(searchInput).toBeVisible();
+        await searchInput.fill(searchCriteria); 
     }
 
     public getNewTransactionModal(): NewTransactionModal {
@@ -157,6 +167,10 @@ export class TransactionsPage {
 
     public getInputDateTo(): Locator {
         return this.dateToInput;
+    }
+
+    public getEmptySearchResultsMessage(): Locator {
+        return this.emptyResultsMessage; 
     }
 
     public async clickOnResetFiltersButton() {
